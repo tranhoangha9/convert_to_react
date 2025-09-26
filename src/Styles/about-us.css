@@ -1,0 +1,58 @@
+.about-us {
+    padding: 40px 0;
+}
+
+
+.about-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.about-header h2 {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1e1e1e;
+    margin-bottom: 15px;
+}
+
+.about-header p {
+    font-size: 18px;
+    color: #666;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.feature-item {
+    text-align: center;
+    padding: 20px;
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #C1DCDC;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+    color: #1E1E1E;
+}
+
+.feature-item h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e1e1e;
+    margin-bottom: 10px;
+}
+
+.feature-item p {
+    font-size: 18px;
+    color: #6f6f6f;
+    line-height: 1.6;
+}
