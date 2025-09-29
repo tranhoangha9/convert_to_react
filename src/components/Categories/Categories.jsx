@@ -16,8 +16,6 @@ function Categories() {
             <img src={categories1} alt="Natural Plants" />
             <div className="category-overlay">
               <h3>Natural Plants</h3>
-              <p>Add a touch of nature to your space</p>
-              <button className="explore-btn">Explore</button>
             </div>
           </div>
           <div className="category-item category-center">
@@ -32,8 +30,6 @@ function Categories() {
             <img src={categories3} alt="Artificial Plants" />
             <div className="category-overlay">
               <h3>Artificial Plants</h3>
-              <p>Low maintenance beauty for your home</p>
-              <button className="explore-btn">Explore</button>
             </div>
           </div>
         </div>

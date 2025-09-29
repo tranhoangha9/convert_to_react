@@ -13,6 +13,7 @@ import selling9 from '../../assets/images/selling9.png';
 
 function BestSelling() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoSlide, setIsAutoSlide] = useState(true);
   
   const plantGroups = [
     [
@@ -33,12 +34,14 @@ function BestSelling() {
   ];
 
   useEffect(() => {
+    if (!isAutoSlide) return;
+    
     const autoSlide = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % plantGroups.length);
     }, 3000);
 
     return () => clearInterval(autoSlide);
-  }, [plantGroups.length]);
+  }, [plantGroups.length, isAutoSlide]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % plantGroups.length);
@@ -46,6 +49,14 @@ function BestSelling() {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + plantGroups.length) % plantGroups.length);
+  };
+
+  const handleMouseEnter = () => {
+    setIsAutoSlide(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsAutoSlide(true);
   };
 
   return (
@@ -58,7 +69,11 @@ function BestSelling() {
             <button className="see-more-btn">See More →</button>
           </div>
           <div className="best-selling-right">
-            <div className="plants-grid-slider">
+            <div 
+              className="plants-grid-slider"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
               {plantGroups.map((group, groupIndex) => (
                 <div key={groupIndex} className={`plants-group ${groupIndex === currentSlide ? 'active' : ''}`}>
                   <div className="plants-grid">
