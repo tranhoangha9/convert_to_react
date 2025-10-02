@@ -1,4 +1,5 @@
 import React from 'react';
+import './Banner.css';
 
 function Banner() {
   return (
@@ -28,7 +29,8 @@ function Banner() {
           </div>
           <div className="banner-right-image">
             <div className="background-image">
-              <img src="/assets/images/banner.png" alt="" />
+            <img src="/assets/images/banner.png" alt="banner" />
+
             </div>
           </div>
         </div>

@@ -1,15 +1,13 @@
 import React from 'react';
 import ClientWrapper from '../components/ClientWrapper';
-import '../styles/globals.css';
-import '../styles/header.css';
-import '../styles/footer.css';
-import '../styles/banner.css';
-import '../styles/best-selling.css';
-import '../styles/about-us.css';
-import '../styles/categories.css';
-import '../styles/testimonials.css';
-import '../styles/products.css';
-import '../styles/cart.css';
+import './globals.css';
+import '../layouts/Header/Header.css';
+import '../layouts/Footer/Footer.css';
+import '../components/Banner/Banner.css';
+import '../components/BestSelling/BestSelling.css';
+import '../components/Categories/Categories.css';
+import '../components/AboutUs/AboutUs.css';
+import '../components/Testimonials/Testimonials.css';
 
 export const metadata = {
   title: 'GREENMIND - Plant Store',

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useCart } from '../../context/CartContext';
+import '../../styles/cart.css';
 
 function Cart() {
   const { items, total, shipping, tax, grandTotal, updateQuantity, removeItem, clearCart } = useCart();

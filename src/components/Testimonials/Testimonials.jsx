@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import './Testimonials.css';
 
 function Testimonials() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -35,7 +36,7 @@ function Testimonials() {
   return (
     <section className="testimonials">
       <div className="container">
-        <h2>What Our Customers Say</h2>
+        <h2 className="testimonials-header">What Our Customers Say</h2>
         <div className="testimonials-wrapper">
           <button className="slide-btn-prev" onClick={prevSlide}>‹</button>
           <div className="testimonials-slider">

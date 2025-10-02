@@ -1,0 +1,164 @@
+.testimonials {
+    padding: 60px 0;
+}
+.testimonials .container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0 60px;
+}
+.testimonials-header {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.testimonials-header h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #1e1e1e;
+    margin-bottom: 15px;
+    max-width: 100%;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.testimonials-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.testimonials-slider {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.slide-btn-prev,
+.slide-btn-next {
+    background-color: white;
+    border: 2px solid #C1DCDC;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    color: #1e1e1e;
+    cursor: pointer;
+    flex-shrink: 0;
+    z-index: 15;
+    position: relative;
+}
+
+
+
+.testimonials-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateX(100%);
+    z-index: 1;
+}
+
+.testimonials-content.active{
+    position: relative;
+    opacity: 1;
+    transform: translateX(0);
+    z-index: 2;
+}
+
+.testimonials-card {
+    background-color: #C1DCDC;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.testimonials-card.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.testimonials-card p {
+    font-size: 18px;
+    color: #6f6f6f;
+    margin-bottom: 20px;
+}
+
+.testimonials-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.testimonials-author svg {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    width: 60px;
+    height: auto;
+}
+
+.testimonials-author img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+    margin-left: 20px;
+    border-radius: 50%;
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-info h4 {
+    font-size: 18px;
+    color: #1e1e1e;
+    margin-bottom: 2px;
+}
+
+.author-info span {
+    font-size: 12px;
+    order: 2;
+    color: #7d7d7d;
+}
+
+.rating {
+    margin-left: auto;
+}
+
+.rating span {
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.testimonial-dots {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #2c5530;
+}

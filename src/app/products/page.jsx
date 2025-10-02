@@ -1,32 +1,21 @@
-import React from 'react';
-import Header from '../../layouts/Header/Header';
-import Footer from '../../layouts/Footer/Footer';
-import { useCart } from '../../context/CartContext';
+'use client';
 
-// Import images
-import selling1 from '../../assets/images/selling1.png';
-import selling2 from '../../assets/images/selling2.png';
-import selling3 from '../../assets/images/selling3.png';
-import selling4 from '../../assets/images/selling4.png';
-import selling5 from '../../assets/images/selling5.png';
-import selling6 from '../../assets/images/selling6.png';
-import categories1 from '../../assets/images/categories1.png';
-import categories2 from '../../assets/images/categories2.png';
-import categories3 from '../../assets/images/categories3.png';
-import example1 from '../../assets/images/example1.png';
-import example2 from '../../assets/images/example2.png';
-import example3 from '../../assets/images/example3.png';
+import React from 'react';
+import { useCart } from '../../context/CartContext';
+import '../../styles/products.css';
+
+// No need to import images - use string paths
 
 function Products() {
   const { addToCart } = useCart();
 
   const products = [
-    { id: 1, name: 'Natural Plants', price: 1400, image: selling1 },
-    { id: 2, name: 'Artificial Plants', price: 900, image: selling2 },
-    { id: 3, name: 'Premium Artificial Plants', price: 3500, image: selling3 },
-    { id: 4, name: 'Natural Plants', price: 1400, image: selling4 },
-    { id: 5, name: 'Artificial Plants', price: 900, image: selling5 },
-    { id: 6, name: 'Premium Artificial Plants', price: 3500, image: selling6 }
+    { id: 1, name: 'Natural Plants', price: 1400, image: '/assets/images/selling1.png' },
+    { id: 2, name: 'Artificial Plants', price: 900, image: '/assets/images/selling2.png' },
+    { id: 3, name: 'Premium Artificial Plants', price: 3500, image: '/assets/images/selling3.png' },
+    { id: 4, name: 'Natural Plants', price: 1400, image: '/assets/images/selling4.png' },
+    { id: 5, name: 'Artificial Plants', price: 900, image: '/assets/images/selling5.png' },
+    { id: 6, name: 'Premium Artificial Plants', price: 3500, image: '/assets/images/selling6.png' }
   ];
 
   const handleAddToCart = (product) => {
@@ -37,8 +26,6 @@ function Products() {
 
   return (
     <div>
-      <Header />
-      
       <section className="products-section">
         <div className="container">
           <div className="products-grid">
@@ -71,16 +58,14 @@ function Products() {
 
       <section className="decor-exp">
         <div className="decor-img">
-          <img src={categories1} alt="" />
-          <img src={categories2} alt="" />
-          <img src={categories3} alt="" />
-          <img src={example1} alt="" />
-          <img src={example2} alt="" />
-          <img src={example3} alt="" />
+          <img src="/assets/images/categories1.png" alt="" />
+          <img src="/assets/images/categories2.png" alt="" />
+          <img src="/assets/images/categories3.png" alt="" />
+          <img src="/assets/images/example1.png" alt="" />
+          <img src="/assets/images/example2.png" alt="" />
+          <img src="/assets/images/example3.png" alt="" />
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

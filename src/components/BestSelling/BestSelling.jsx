@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
+import './BestSelling.css';
 
 function BestSelling() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -80,7 +81,7 @@ function BestSelling() {
                       <div key={plant.id} className="plant-card">
                         <img src={plant.image} alt={plant.name} />
                         <h3>{plant.name}</h3>
-                        <p className="price">₱ {plant.price.toLocaleString()}.00</p>
+                        <p className="price">₱ {plant.price.toLocaleString('en-US')}.00</p>
                         <button 
                           className="add-to-cart"
                           onClick={() => handleAddToCart(plant)}
