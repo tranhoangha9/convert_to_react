@@ -25,6 +25,8 @@ function Products() {
   };
 
   return (
+    <>
+      <title>Products - Greenmind</title>
     <div>
       <section className="products-section">
         <div className="container">
@@ -67,6 +69,7 @@ function Products() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 

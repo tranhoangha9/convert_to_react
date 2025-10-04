@@ -9,7 +9,7 @@
 .cart-main {
     background: #f8f9fa;
     min-height: calc(100vh - 200px);
-    padding: 60px 0;
+    padding: 20px 0 30px 0;
 }
 
 .cart-header {
@@ -322,6 +322,6 @@
 
 .empty-cart {
     text-align: center;
-    padding: 40px;
+    padding: 20px;
     color: #666;
 }

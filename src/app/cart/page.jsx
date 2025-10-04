@@ -30,6 +30,9 @@ function Cart() {
   };
 
   return (
+    <>
+      <title>Cart</title>
+  
     <main className="cart-main">
         <div className="container">
           <div className="cart-header">
@@ -163,6 +166,7 @@ function Cart() {
           </div>
         </div>
       </main>
+    </>
   );
 }
 
