@@ -27,7 +27,7 @@ class Brands extends Component {
     
     return (
       <section className="brands">
-        <h2 className="brands-title">Our Brands</h2>
+        <h2 className="brands-title">Shop By Brands</h2>
         <div className="brands-images">
           {brands.map((brand) => (
             <div key={brand.id} className="brand-logo">

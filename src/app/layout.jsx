@@ -12,8 +12,7 @@ import '../components/Collection/Collection.css';
 import '../components/Brands/Brands.css';
 
 export const metadata = {
-  title: "Cora'l - Fashion Store",
-  description: 'Shop the latest fashion trends and accessories.',
+  title: "Cora'l ",
 };
 
 export default function RootLayout({ children }) {

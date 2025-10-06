@@ -7,16 +7,12 @@ import Brands from '../components/Brands/Brands';
 import Collection from '../components/Collection/Collection';
 
 class Home extends Component {
-  addToCart = (product) => {
-    console.log('Adding to cart:', product);
-  }
-
   render() {
     return (
       <div className="home">
         <Notification />
         <Banner />
-        <BestSelling onAddToCart={this.addToCart} />
+        <BestSelling />
         <Collection />
         <Brands />
       </div>
