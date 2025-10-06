@@ -1,23 +1,27 @@
-import React from 'react';
+'use client';
+import React, { Component } from 'react';
+import Notification from '../components/Notification/Notification';
 import Banner from '../components/Banner/Banner';
 import BestSelling from '../components/BestSelling/BestSelling';
-import AboutUs from '../components/AboutUs/AboutUs';
-import Categories from '../components/Categories/Categories';
-import Testimonials from '../components/Testimonials/Testimonials';
+import Brands from '../components/Brands/Brands';
+import Collection from '../components/Collection/Collection';
 
-function Home() {
-  return (
-    <div className="home">
+class Home extends Component {
+  addToCart = (product) => {
+    console.log('Adding to cart:', product);
+  }
 
-      <Banner />
-      <BestSelling />
-      <AboutUs />
-      <Categories />
-      <Testimonials />
-   
-    </div>
-  );
+  render() {
+    return (
+      <div className="home">
+        <Notification />
+        <Banner />
+        <BestSelling onAddToCart={this.addToCart} />
+        <Collection />
+        <Brands />
+      </div>
+    );
+  }
 }
 
 export default Home;
-

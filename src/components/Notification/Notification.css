@@ -1,0 +1,10 @@
+.notification {
+    background-color: #dddddd;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.notification p {
+    margin: 0 auto;
+    text-align: center;
+}

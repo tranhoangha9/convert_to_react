@@ -1,43 +1,149 @@
-import React from 'react';
+'use client'
+import React, { Component } from 'react';
 import './Banner.css';
 
-function Banner() {
-  return (
-    <section className="banner">
-      <div className="container">
-        <div className="banner-content">
-          <div className="banner-left-largetext">
-            <h1>Buy your dream plants</h1>
-            <div className="banner-left-smalltext">
-              <div className="stat">
-                <div className="stat-number">50+</div>
-                <div className="stat-label">Plant Species</div>
-              </div>
-              <div className="stat">
-                <div className="stat-number">100+</div>
-                <div className="stat-label"> Customers</div>
-              </div>
+class Banner extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentSlide: 0,
+      isHovered: false
+    };
+  }
+
+  componentDidMount() {
+    this.startAuto();
+  }
+
+  componentWillUnmount() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
+  startAuto = () => {
+    this.timer = setInterval(() => {
+      if (!this.state.isHovered) {
+        this.setState(prev => ({
+          currentSlide: (prev.currentSlide + 1) % 3
+        }));
+      }
+    }, 6000);
+  }
+
+  next = () => {
+    this.setState(prev => ({
+      currentSlide: (prev.currentSlide + 1) % 3
+    }));
+  }
+
+  prev = () => {
+    this.setState(prev => ({
+      currentSlide: (prev.currentSlide - 1 + 3) % 3
+    }));
+  }
+
+  goTo = (index) => {
+    this.setState({
+      currentSlide: index
+    });
+  }
+
+  onMouseEnter = () => {
+    this.setState({ isHovered: true });
+  }
+
+  onMouseLeave = () => {
+    this.setState({ isHovered: false });
+  }
+
+  render() {
+    const { currentSlide } = this.state;
+    
+    return (
+      <section 
+        className="banner"
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+      >
+      <div className="banner-container">
+        <div className="banner-slides">
+          <div className={`banner-slide ${currentSlide === 0 ? 'active' : ''}`}>
+            <div className="banner-images">
+              <img src="/assets/images/bannerxin.png" alt="Banner 1" className="banner-img" />
             </div>
-            <div className="search-box">
-              <input type="text" placeholder="What are you looking for?" />
-              <button>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14.6776 12.93C15.888 11.2784 16.4301 9.23062 16.1955 7.19644C15.9609 5.16226 14.9668 3.29168 13.4123 1.95892C11.8577 0.626155 9.85727 -0.070492 7.81113 0.00834944C5.76499 0.0871909 3.82406 0.935706 2.37667 2.38414C0.929274 3.83257 0.0821478 5.7741 0.00477057 7.8203C-0.0726067 9.86649 0.625471 11.8665 1.95934 13.4201C3.29322 14.9737 5.16452 15.9663 7.19886 16.1995C9.2332 16.4326 11.2806 15.8891 12.9313 14.6775H12.9301C12.9676 14.7275 13.0076 14.775 13.0526 14.8213L17.8651 19.6338C18.0995 19.8683 18.4174 20.0001 18.749 20.0003C19.0806 20.0004 19.3987 19.8688 19.6332 19.6344C19.8678 19.4 19.9996 19.082 19.9997 18.7504C19.9998 18.4189 19.8682 18.1008 19.6338 17.8663L14.8213 13.0538C14.7766 13.0085 14.7286 12.968 14.6776 12.93ZM15.0001 8.125C15.0001 9.02784 14.8223 9.92184 14.4768 10.756C14.1313 11.5901 13.6248 12.348 12.9864 12.9864C12.348 13.6248 11.5901 14.1312 10.756 14.4767C9.92192 14.8222 9.02792 15 8.12508 15C7.22225 15 6.32825 14.8222 5.49414 14.4767C4.66002 14.1312 3.90213 13.6248 3.26373 12.9864C2.62532 12.348 2.11891 11.5901 1.77341 10.756C1.42791 9.92184 1.25008 9.02784 1.25008 8.125C1.25008 6.30164 1.97441 4.55296 3.26373 3.26364C4.55304 1.97433 6.30172 1.25 8.12508 1.25C9.94845 1.25 11.6971 1.97433 12.9864 3.26364C14.2758 4.55296 15.0001 6.30164 15.0001 8.125Z" fill="#1E1E1E" />
+            <div className="banner-content">
+              <h1>Carry your Funk</h1>
+              <p>Trendy handbags collection for your party animal</p>
+              <button className="sm-btn">
+                <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5.5 12.5H19.5M19.5 12.5L15 8M19.5 12.5L15 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
             </div>
           </div>
-          <div className="banner-right-image">
-            <div className="background-image">
-            <img src="/assets/images/banner.png" alt="banner" />
-
+          
+          <div className={`banner-slide ${currentSlide === 1 ? 'active' : ''}`}>
+            <div className="banner-images">
+              <img src="/assets/images/bannerxin.png" alt="Banner 2" className="banner-img" />
+            </div>
+            <div className="banner-content">
+            <h1>Carry your  2</h1>
+            <p>Trendy handbags collection for your party animal 2</p>
+              <button className="sm-btn">
+                <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5.5 12.5H19.5M19.5 12.5L15 8M19.5 12.5L15 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <div className={`banner-slide ${currentSlide === 2 ? 'active' : ''}`}>
+            <div className="banner-images">
+              <img src="/assets/images/bannerxin.png" alt="Banner 3" className="banner-img" />
+            </div>
+            <div className="banner-content">
+            <h1>Carry your Funk 3</h1>
+            <p>Trendy handbags collection for your party animal 3</p>
+              <button className="sm-btn">
+                <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5.5 12.5H19.5M19.5 12.5L15 8M19.5 12.5L15 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
+        
+        <button className="banner-nav prev" onClick={this.prev}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        
+        <button className="banner-nav next" onClick={this.next}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        
+        <div className="banner-dots">
+          <button 
+            className={`dot ${currentSlide === 0 ? 'active' : ''}`}
+            onClick={() => this.goTo(0)}
+          ></button>
+          <button 
+            className={`dot ${currentSlide === 1 ? 'active' : ''}`}
+            onClick={() => this.goTo(1)}
+          ></button>
+          <button 
+            className={`dot ${currentSlide === 2 ? 'active' : ''}`}
+            onClick={() => this.goTo(2)}
+          ></button>
+        </div>
       </div>
     </section>
-  );
+    );
+  }
 }
 
 export default Banner;
-
