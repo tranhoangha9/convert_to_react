@@ -2,7 +2,7 @@ import React from 'react';
 import ClientWrapper from '../components/ClientWrapper';
 import Header from '../layouts/Header/Header';
 import Footer from '../layouts/Footer/Footer';
-import './globals.css';
+import '../styles/globals.css';
 import '../layouts/Header/Header.css';
 import '../layouts/Footer/Footer.css';
 import '../components/Notification/Notification.css';
