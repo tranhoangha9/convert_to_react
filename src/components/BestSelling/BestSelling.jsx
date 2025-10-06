@@ -9,8 +9,8 @@ class BestSelling extends Component {
       products: [
         { id: 1, brand: "Grande", name: "Blossom Pouch", price: 39.49, image: "/assets/images/newarrival1.png" },
         { id: 2, brand: "Coach", name: "Leather Coach Bag", price: 54.69, image: "/assets/images/newarrival2.png" },
-        { id: 3, brand: "Coach", name: "Leather Coach Bag", price: 54.69, image: "/assets/images/newarrival3.png" },
-        { id: 4, brand: "Coach", name: "Leather Coach Bag", price: 54.69, image: "/assets/images/newarrival4.png" }
+        { id: 3, brand: "Remus", name: "Brown Strap Bag", price: 57.00, image: "/assets/images/newarrival3.png" },
+        { id: 4, brand: "Boujee", name: "Black Bag", price: 56.49, image: "/assets/images/newarrival4.png" }
       ]
     };
   }
@@ -73,7 +73,7 @@ class BestSelling extends Component {
                   </div>
                 </div>
                 <p className="description">{product.name}</p>
-                <ins>${product.price}</ins>
+                <ins>${product.price.toFixed(2)}</ins>
               </div>
             </div>
           ))}

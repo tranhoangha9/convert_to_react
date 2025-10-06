@@ -10,7 +10,6 @@ import '../components/Banner/Banner.css';
 import '../components/BestSelling/BestSelling.css';
 import '../components/Collection/Collection.css';
 import '../components/Brands/Brands.css';
-import '../styles/cart.css';
 
 export const metadata = {
   title: "Cora'l - Fashion Store",

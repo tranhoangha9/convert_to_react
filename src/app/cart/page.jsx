@@ -1,6 +1,6 @@
 'use client';
 import React, { Component } from 'react';
-import '../../styles/cart.css';
+import './cart.css';
 
 class Cart extends Component {
   state = {
@@ -138,7 +138,7 @@ class Cart extends Component {
                         <p className="cart-qty-text">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <div className="cart-item-price">${item.price}</div>
+                    <div className="cart-item-price">${item.price.toFixed(2)}</div>
                     <div className="cart-item-qty">
                       <span>{item.quantity}</span>
                     </div>
@@ -179,7 +179,7 @@ class Cart extends Component {
 
               <div className="order-buttons">
                 <button className="btn-place-order" onClick={this.placeOrder}>Place Order</button>
-                <a href="/" className="btn-continue">Continue Shopping</a>
+                <button className="btn-continue">Continue Shopping</button>
               </div>
             </div>
           </div>

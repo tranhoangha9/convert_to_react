@@ -88,7 +88,7 @@ class Banner extends Component {
               <img src="/assets/images/bannerxin.png" alt="Banner 2" className="banner-img" />
             </div>
             <div className="banner-content">
-            <h1>Carry your  2</h1>
+            <h1>Carry your Funk2</h1>
             <p>Trendy handbags collection for your party animal 2</p>
               <button className="sm-btn">
                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,7 +103,7 @@ class Banner extends Component {
               <img src="/assets/images/bannerxin.png" alt="Banner 3" className="banner-img" />
             </div>
             <div className="banner-content">
-            <h1>Carry your Funk 3</h1>
+            <h1>Carry your Funk3</h1>
             <p>Trendy handbags collection for your party animal 3</p>
               <button className="sm-btn">
                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
