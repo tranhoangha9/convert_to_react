@@ -45,7 +45,10 @@ class BestSelling extends Component {
     
     return (
       <section className="new-arrivals">
-        <h2>New Arrivals</h2>
+        <div className="arrivals-header">
+          <h2>New Arrivals</h2>
+          <a href="/products" className="view-all-btn">View All</a>
+        </div>
         <div className="arrivals-container">
           {products.map((product) => (
             <div key={product.id} className="new-arrivals-products">
