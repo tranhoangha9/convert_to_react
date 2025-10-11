@@ -55,7 +55,6 @@ class Login extends Component {
         <div className="auth-card">
           <div className="auth-header">
             <h1>Đăng nhập</h1>
-            <p>Chào mừng bạn quay trở lại</p>
           </div>
           
           <form onSubmit={this.handleSubmit} className="auth-form">
