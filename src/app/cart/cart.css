@@ -280,7 +280,7 @@
 
 .coupon-section {
     background: white;
-    padding: 20px 0;
+    padding: 20px 0 30px 0;
 }
 
 .coupon-toggle {
@@ -299,12 +299,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
+    padding: 15px 0 ;
     border-bottom: 1px solid #eee;
 }
 
 .coupon-header svg {
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease;
 }
 
 .coupon-toggle:checked ~ .coupon-header svg {
@@ -315,6 +315,7 @@
     display: none;
     gap: 0;
     margin-top: 15px;
+    padding-bottom: 20px;
 }
 
 .coupon-toggle:checked ~ .coupon-form {
@@ -353,7 +354,6 @@
     color: #003169;
 }
 
-/* Mobile Styles */
 @media (max-width: 820px) {
     .cart-main-layout {
         flex-direction: column;
