@@ -10,13 +10,32 @@ class Account extends Component {
       profileImage: null,
       profileImageUrl: null,
       loading: false,
-      error: ''
+      error: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      dateOfBirth: '',
+      countryCode: ''
     };
   }
 
   componentDidMount() {
     this.checkAuth();
+    const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (savedProfile) {
+      this.setState({
+        firstName: savedProfile.firstName || '',
+        lastName: savedProfile.lastName || '',
+        email: savedProfile.email || '',
+        phone: savedProfile.phone || '',
+        countryCode: savedProfile.countryCode || '',
+        dateOfBirth: savedProfile.dateOfBirth || '',
+        profileImageUrl: savedProfile.profileImageUrl || null
+      });
+    }
   }
+
 
   checkAuth = () => {
     const user = localStorage.getItem('user');
@@ -40,18 +59,7 @@ class Account extends Component {
   handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      this.setState({ error: 'Chỉ chấp nhận file ảnh (JPG, PNG, WEBP)' });
-      return;
-    }
-    const maxSize = 2 * 1024 * 1024;
-    if (file.size > maxSize) {
-      this.setState({ error: 'Kích thước file không được vượt quá 2MB' });
-      return;
-    }
 
-    this.setState({ error: '' });
     const reader = new FileReader();
     reader.onload = (e) => {
       this.setState({
@@ -63,12 +71,35 @@ class Account extends Component {
   }
 
   handleSaveProfile = () => {
-    const { profileImageUrl } = this.state;
+    const { profileImageUrl, firstName, lastName, email, phone, dateOfBirth, countryCode } = this.state;
 
-    if (profileImageUrl) {
-      localStorage.setItem('profileImage', profileImageUrl);
-      alert('Ảnh đại diện đã được lưu!');
+
+    const userProfile = {
+      firstName,
+      lastName,
+      email,
+      phone,
+      dateOfBirth,
+      profileImageUrl,
+      countryCode
     }
+      localStorage.setItem('userProfile', JSON.stringify(userProfile));
+      alert(' lưu thông tin thành công');
+      console.log( userProfile);
+  }
+
+  handleInputChange = (e) => {  
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
+  handleDeleteProfile = () => {
+    localStorage.removeItem('profileImage');
+    const savedProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (savedProfile){
+      savedProfile.profileImageUrl = null;
+      localStorage.setItem('userProfile', JSON.stringify(savedProfile));
+    }
+    this.setState({ profileImage: null, profileImageUrl: null });
   }
 
   handleLogout = () => {
@@ -178,7 +209,7 @@ class Account extends Component {
                 Upload
               </label>
               {profileImageUrl && (
-                <button className="delete-btn">
+                <button className="delete-btn" onClick={this.handleDeleteProfile}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <polyline points="3,6 5,6 21,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -193,24 +224,24 @@ class Account extends Component {
             <div className="form-row">
               <div className="form-group">
                 <label>First Name</label>
-                <input type="text" />
+                <input type="text" value={this.state.firstName} onChange={this.handleInputChange} name="firstName"/>
               </div>
               <div className="form-group">
                 <label>Last Name</label>
-                <input type="text" />
+                <input type="text" value={this.state.lastName} onChange={this.handleInputChange} name="lastName"/>
               </div>
             </div>
 
             <div className="form-row form-row-contact">
               <div className="form-group">
                 <label>Email</label>
-                <input type="email" />
+                <input type="email" value={this.state.email} onChange={this.handleInputChange} name="email"/>
               </div>
               <div className="form-group">
                 <label>Mobile Number</label>
                 <div className="phone-input">
-                  <input type="text" className="country-code" />
-                  <input type="text" className="phone-number" />
+                  <input type="text" className="country-code" value={this.state.countryCode} onChange={this.handleInputChange} name='countryCode' />
+                  <input type="text" className="phone-number"  value={this.state.phone} onChange={this.handleInputChange} name="phone" />
                 </div>
               </div>
             </div>
@@ -219,10 +250,10 @@ class Account extends Component {
               <div className="form-group">
                 <label>Date of birth</label>
                 <div className="date-input">
-                  <input type="text" />
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <input type="date" value={this.state.dateOfBirth} onChange={this.handleInputChange} name="dateOfBirth"/>
+                  {/* <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  </svg> */}
                 </div>
               </div>
             </div>
@@ -236,7 +267,7 @@ class Account extends Component {
           <div className="password-form">
             <div className="form-group">
               <label>Current Password</label>
-              <input type="password" />
+              <input type="password"/>
             </div>
 
             <div className="form-group">
@@ -252,12 +283,12 @@ class Account extends Component {
 
             <div className="form-group">
               <label>Confirm Password</label>
-              <input type="password" />
+              <input type="password"/>
             </div>
           </div>
 
           <div className="save-section">
-            <button className="save-changes-btn">
+            <button className="save-changes-btn" onClick={this.handleSaveProfile}>
               Save Changes
             </button>
           </div>

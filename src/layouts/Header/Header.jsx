@@ -68,7 +68,6 @@ class Header extends Component {
           <nav className="nav-menu">
             <label htmlFor="menu-toggle" className="menu-close">×</label>
             <ul className="nav-menu-list">
-              <li><Link href="/products">Sản phẩm</Link></li>
               <li><Link href="#">Handbags</Link></li>
               <li><Link href="#">Watches</Link></li>
               <li><Link href="#">Skincare</Link></li>
