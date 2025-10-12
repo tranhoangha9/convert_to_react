@@ -1,6 +1,6 @@
 .banner{
     display: flex;
-    height: 450px;
+    height: 500px;
     position: relative;
     overflow: hidden;
     justify-content: center;
@@ -44,14 +44,20 @@
 
 .banner-content {
     position: absolute;
+    right: 0;
     top: 50%;
-    left: 50%;
-    transform: translate(-10%, -50%);
+    transform: translateY(-50%);
     z-index: 2;
     color: #1b4b66;
     text-align: left;
-    max-width: 500px;
-  
+    width: 60%;
+    background-color: rgba(222,222, 222, 0.7);
+    padding: 60px 280px 60px 40px;
+    border-radius: 20px 0 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 80%;
 }
 
 .banner-images{
@@ -76,7 +82,8 @@
 }
 
 .banner-content p {
-    font-size: 24px;
+    font-size: 28px;
+    line-height: 38px;
     margin-bottom: 15px;
 }
 
@@ -91,6 +98,7 @@
     font-size: 16px;
     align-items: center;
     gap: 10px;
+    width: 180px;
 }
 
 .sm-btn:hover {
@@ -125,6 +133,7 @@
 
 .banner-nav.next {
     right: 20px;
+    z-index: 4;
 }
 
 .banner-dots {

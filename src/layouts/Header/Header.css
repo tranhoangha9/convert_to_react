@@ -102,18 +102,25 @@
     margin-left: 24px;
 }
 
-.nav-icons a{
+.nav-icons button,
+.nav-icons a {
     align-items: center;
     display: flex;
     justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
-.nav-icons a:hover{
+.nav-icons button:hover,
+.nav-icons a:hover {
     filter: drop-shadow(0 0 8px rgb(237, 32, 104));
     transform: scale(1.15);
 }
 
-.nav-icons a svg:hover{
+.nav-icons button svg:hover,
+.nav-icons a svg:hover {
     fill: #5ea6d0;
 }
 

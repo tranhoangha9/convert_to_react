@@ -79,6 +79,7 @@ class Banner extends Component {
                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.5 12.5H19.5M19.5 12.5L15 8M19.5 12.5L15 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
+                See more
               </button>
             </div>
           </div>
@@ -94,6 +95,7 @@ class Banner extends Component {
                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.5 12.5H19.5M19.5 12.5L15 8M19.5 12.5L15 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
+                See more
               </button>
             </div>
           </div>
@@ -109,6 +111,7 @@ class Banner extends Component {
                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.5 12.5H19.5M19.5 12.5L15 8M19.5 12.5L15 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
+                See more
               </button>
             </div>
           </div>

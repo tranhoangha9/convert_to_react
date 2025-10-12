@@ -37,21 +37,34 @@ class Account extends Component {
   }
 
 
-  checkAuth = () => {
+  checkAuth = async () => {
     const user = localStorage.getItem('user');
     if (!user) {
       window.location.href = '/auth/login';
       return;
     }
+    
     try {
       const userData = JSON.parse(user);
-      this.setState({ user: userData });
-      const savedImage = localStorage.getItem('profileImage');
-      if (savedImage) {
-        this.setState({ profileImageUrl: savedImage });
+      
+      const response = await fetch(`/api/users/profile?userId=${userData.id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        this.setState({ 
+          user: data.user,
+          email: data.user.email,
+          firstName: data.user.name.split(' ')[0] || '',
+          lastName: data.user.name.split(' ').slice(1).join(' ') || '',
+          phone: data.user.phone || '',
+          address: data.user.address || '',
+          profileImageUrl: data.user.avatar || ''
+        });
+      } else {
+        this.setState({ user: userData });
       }
     } catch (error) {
-      console.error('Error parsing user data:', error);
+      console.error('Error checking auth:', error);
       window.location.href = '/auth/login';
     }
   }
@@ -70,22 +83,52 @@ class Account extends Component {
     reader.readAsDataURL(file);
   }
 
-  handleSaveProfile = () => {
-    const { profileImageUrl, firstName, lastName, email, phone, dateOfBirth, countryCode } = this.state;
+  handleSaveProfile = async () => {
+    try {
+      const { user, firstName, lastName, phone, address, profileImageUrl } = this.state;
+      
+      if (!user) {
+        this.setState({ error: 'Không tìm thấy thông tin user' });
+        return;
+      }
 
+      const updateData = {
+        name: `${firstName} ${lastName}`.trim(),
+        phone: phone,
+        address: address,
+        avatar: profileImageUrl
+      };
 
-    const userProfile = {
-      firstName,
-      lastName,
-      email,
-      phone,
-      dateOfBirth,
-      profileImageUrl,
-      countryCode
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          ...updateData
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const updatedUser = { ...user, ...updateData };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        this.setState({ 
+          user: updatedUser,
+          error: '' 
+        });
+        
+        alert('Thông tin đã được lưu thành công!');
+      } else {
+        this.setState({ error: data.error || 'Có lỗi xảy ra khi lưu thông tin' });
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      this.setState({ error: 'Có lỗi xảy ra khi lưu thông tin' });
     }
-      localStorage.setItem('userProfile', JSON.stringify(userProfile));
-      alert(' lưu thông tin thành công');
-      console.log( userProfile);
   }
 
   handleInputChange = (e) => {  
@@ -267,7 +310,7 @@ class Account extends Component {
           <div className="password-form">
             <div className="form-group">
               <label>Current Password</label>
-              <input type="password"/>
+              <input type="password" value="••••••••" readOnly />
             </div>
 
             <div className="form-group">

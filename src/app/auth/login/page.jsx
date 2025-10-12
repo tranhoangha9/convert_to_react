@@ -20,7 +20,7 @@ class Login extends Component {
     });
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password } = this.state;
 
@@ -33,16 +33,33 @@ class Login extends Component {
       return;
     }
 
-    if (username === 'admin' && password === '123123') {
-      localStorage.setItem('user', JSON.stringify({
-        username: 'admin',
-        role: 'admin',
-        loginTime: new Date().toISOString()
-      }));
-      window.location.href = '/account';
-    } else {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: username,
+          password: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/account';
+      } else {
+        this.setState({ 
+          error: data.error || 'Đăng nhập thất bại',
+          loading: false 
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
       this.setState({ 
-        error: 'Tên đăng nhập hoặc mật khẩu không đúng',
+        error: 'Có lỗi xảy ra khi đăng nhập',
         loading: false 
       });
     }

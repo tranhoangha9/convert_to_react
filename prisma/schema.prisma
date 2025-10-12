@@ -52,9 +52,10 @@ model User {
   password  String  @db.VarChar(255)
   phone     String? @db.VarChar(20)
   address   String? @db.Text
+  avatar    String? @db.NVarChar(MAX)
   role      String  @default("user") @db.VarChar(50)
   isActive  Boolean @default(true)
-  orders    Order[] // Thêm dòng này
+  orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
