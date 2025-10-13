@@ -1,5 +1,12 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Bỏ qua tất cả các file và thư mục ngoài src, prisma, public, README.md, và .gitignore
+/*
 
+!README.md
+!src/
+!prisma/
+!public/
+!.gitignore
 # dependencies
 /node_modules
 /.pnp
