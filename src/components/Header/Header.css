@@ -113,6 +113,17 @@
     cursor: pointer;
 }
 
+.cart-button,
+.cart-button-mobile {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .nav-icons button:hover,
 .nav-icons a:hover {
     filter: drop-shadow(0 0 8px rgb(237, 32, 104));

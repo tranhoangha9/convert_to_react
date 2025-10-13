@@ -107,4 +107,19 @@
   margin: 0;
 }
 
+.auth-link {
+  margin-top: 10px;
+  font-size: 14px !important;
+}
+
+.auth-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
 

@@ -1,15 +1,15 @@
 import React from 'react';
 import ClientWrapper from '../components/ClientWrapper';
-import Header from '../layouts/Header/Header';
-import Footer from '../layouts/Footer/Footer';
+import Header from '../components/Header/page';
+import Footer from '../components/Footer/page';
 import '../styles/globals.css';
-import '../layouts/Header/Header.css';
-import '../layouts/Footer/Footer.css';
-import '../components/Notification/Notification.css';
-import '../components/Banner/Banner.css';
-import '../components/BestSelling/BestSelling.css';
-import '../components/Collection/Collection.css';
-import '../components/Brands/Brands.css';
+import '../components/Header/Header.css';
+import '../components/Footer/Footer.css';
+import './homepage/Notification/Notification.css';
+import './homepage/Banner/Banner.css';
+import './homepage/BestSelling/BestSelling.css';
+import './homepage/Collection/Collection.css';
+import './homepage/Brands/Brands.css';
 
 export const metadata = {
   title: "Cora'l ",

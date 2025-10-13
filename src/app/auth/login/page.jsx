@@ -1,5 +1,6 @@
 'use client';
 import React, { Component } from 'react';
+import Link from 'next/link';
 import '../auth.css';
 
 class Login extends Component {
@@ -118,6 +119,9 @@ class Login extends Component {
 
           <div className="auth-footer">
             <p>Demo: admin / 123123</p>
+            <p className="auth-link">
+              Bạn chưa có tài khoản? <Link href="/auth/register">Đăng ký tại đây</Link>
+            </p>
           </div>
         </div>
       </div>

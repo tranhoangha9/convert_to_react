@@ -1,10 +1,10 @@
 'use client';
 import React, { Component } from 'react';
-import Notification from '../components/Notification/Notification';
-import Banner from '../components/Banner/Banner';
-import BestSelling from '../components/BestSelling/BestSelling';
-import Brands from '../components/Brands/Brands';
-import Collection from '../components/Collection/Collection';
+import Notification from './homepage/Notification/page';
+import Banner from './homepage/Banner/page';
+import BestSelling from './homepage/BestSelling/page';
+import Brands from './homepage/Brands/page';
+import Collection from './homepage/Collection/page';
 
 class Home extends Component {
   render() {

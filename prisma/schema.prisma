@@ -39,6 +39,7 @@ model Product {
   isActive        Boolean     @default(true)
   isFeatured      Boolean     @default(false)
   orderItems      OrderItem[] // Thêm dòng này
+  cartItems       CartItem[]  // Quan hệ với CartItem
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -46,16 +47,17 @@ model Product {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique @db.VarChar(255)
-  name      String  @db.VarChar(255)
-  password  String  @db.VarChar(255)
-  phone     String? @db.VarChar(20)
-  address   String? @db.Text
-  avatar    String? @db.NVarChar(MAX)
-  role      String  @default("user") @db.VarChar(50)
-  isActive  Boolean @default(true)
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(255)
+  name      String   @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  phone     String?  @db.VarChar(20)
+  address   String?  @db.Text
+  avatar    String?  @db.NVarChar(MAX)
+  role      String   @default("user") @db.VarChar(50)
+  isActive  Boolean  @default(true)
   orders    Order[]
+  cart      Cart?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -77,15 +79,62 @@ model Order {
   @@map("Orders")
 }
 
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id])
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("Cart")
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  cart      Cart     @relation(fields: [cartId], references: [id])
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("CartItems")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
-  price     Decimal @db.Decimal(10, 2)
+  price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
 
   @@map("OrderItems")
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  title     String?  @db.NVarChar(255)
+  imageUrl  String   @db.NVarChar(500)
+  link      String?  @db.NVarChar(500)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Banners")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String   @db.NVarChar(500)
+  isActive  Boolean  @default(true)
+  type      String   @default("info") @db.NVarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("Notifications")
 }
