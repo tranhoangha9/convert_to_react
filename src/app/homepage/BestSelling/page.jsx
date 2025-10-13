@@ -17,9 +17,12 @@ class BestSelling extends Component {
   }
 
   addToCart = async (product) => {
+    console.log('Adding to cart (homepage):', product);
     try {
       const { addToCart: addToCartService } = await import('@/lib/cartService');
       const success = await addToCartService(product, 1);
+      
+      console.log('Add to cart result (homepage):', success);
       
       if (success) {
         alert(`Đã thêm "${product.name}" vào giỏ hàng!`);

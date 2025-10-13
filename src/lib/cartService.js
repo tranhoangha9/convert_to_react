@@ -49,8 +49,7 @@ const getLocalCart = () => {
 const saveLocalCart = (cartItems) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
-  
-  // Dispatch event để các component khác cập nhật
+
   const event = new Event('storage');
   event.key = CART_STORAGE_KEY;
   window.dispatchEvent(event);
@@ -66,7 +65,6 @@ const clearLocalCart = () => {
 };
 
 /**
- * Lấy giỏ hàng từ DB (cho user đã đăng nhập)
  * @param {number} userId - ID của user
  * @returns {Promise<Array>}
  */
@@ -112,70 +110,72 @@ const saveDbCart = async (userId, cartItems) => {
 };
 
 /**
- * Lấy giỏ hàng (tự động chọn localStorage hoặc DB)
- * @returns {Promise<Array>} Mảng các item trong giỏ hàng
+ * @returns {Promise<Array>} 
  */
 export const getCart = async () => {
   const user = getCurrentUser();
   
-  if (user && user.id) {
-    // Đã đăng nhập: lấy từ DB
-    return await getDbCart(user.id);
-  } else {
-    // Chưa đăng nhập: lấy từ localStorage
-    return getLocalCart();
+  if (!user || !user.id) {
+    console.log('User not logged in, returning empty cart');
+    return [];
   }
+  return await getDbCart(user.id);
 };
 
 /**
- * Thêm sản phẩm vào giỏ hàng
+
  * @param {Object} product - Sản phẩm cần thêm
  * @param {number} quantity - Số lượng (mặc định 1)
  * @returns {Promise<boolean>} true nếu thành công
  */
 export const addToCart = async (product, quantity = 1) => {
-  const user = getCurrentUser();
-  
-  if (user && user.id) {
-    // Đã đăng nhập: lưu vào DB
+  try {
+    console.log('addToCart called with:', { product, quantity });
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: parseFloat(product.price),
+      image: product.image,
+      quantity: quantity
+    };
+
+    const user = getCurrentUser();
+    console.log('Current user:', user);
+    
+    if (!user || !user.id) {
+      console.error('User not logged in');
+      alert('Vui lòng đăng nhập để thêm vào giỏ hàng!');
+      return false;
+    }
     const currentCart = await getDbCart(user.id);
-    const existingItem = currentCart.find(item => item.id === product.id);
+    console.log('Current cart from DB:', currentCart);
+    
+    const existingItem = currentCart.find(item => String(item.id) === String(product.id));
     
     let updatedCart;
     if (existingItem) {
       updatedCart = currentCart.map(item =>
-        item.id === product.id
+        String(item.id) === String(product.id)
           ? { ...item, quantity: item.quantity + quantity }
           : item
       );
     } else {
-      updatedCart = [...currentCart, { ...product, quantity }];
+      updatedCart = [...currentCart, cartItem];
     }
     
-    return await saveDbCart(user.id, updatedCart);
-  } else {
-    // Chưa đăng nhập: lưu vào localStorage
-    const currentCart = getLocalCart();
-    const existingItem = currentCart.find(item => item.id === product.id);
+    console.log('Updated cart:', updatedCart);
+    const success = await saveDbCart(user.id, updatedCart);
+    console.log('Save result:', success);
     
-    let updatedCart;
-    if (existingItem) {
-      updatedCart = currentCart.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      );
-    } else {
-      updatedCart = [...currentCart, { ...product, quantity }];
-    }
-    
-    saveLocalCart(updatedCart);
-    return true;
+    return success;
+  } catch (error) {
+    console.error('Error in addToCart:', error);
+    return false;
   }
 };
 
 /**
- * Cập nhật số lượng sản phẩm trong giỏ hàng
+ * Cập nhật số lượng sản phẩm trong giỏ hàng (LUÔN dùng DB)
  * @param {number} productId - ID sản phẩm
  * @param {number} quantity - Số lượng mới
  * @returns {Promise<boolean>} true nếu thành công
@@ -183,52 +183,40 @@ export const addToCart = async (product, quantity = 1) => {
 export const updateCartItemQuantity = async (productId, quantity) => {
   const user = getCurrentUser();
   
-  if (user && user.id) {
-    // Đã đăng nhập: cập nhật DB
-    const currentCart = await getDbCart(user.id);
-    const updatedCart = currentCart.map(item =>
-      item.id === productId
-        ? { ...item, quantity: Math.max(1, quantity) }
-        : item
-    );
-    
-    return await saveDbCart(user.id, updatedCart);
-  } else {
-    // Chưa đăng nhập: cập nhật localStorage
-    const currentCart = getLocalCart();
-    const updatedCart = currentCart.map(item =>
-      item.id === productId
-        ? { ...item, quantity: Math.max(1, quantity) }
-        : item
-    );
-    
-    saveLocalCart(updatedCart);
-    return true;
+  if (!user || !user.id) {
+    console.error('User not logged in');
+    return false;
   }
+
+  // Luôn cập nhật DB
+  const currentCart = await getDbCart(user.id);
+  const updatedCart = currentCart.map(item =>
+    String(item.id) === String(productId)
+      ? { ...item, quantity: Math.max(1, quantity) }
+      : item
+  );
+  
+  return await saveDbCart(user.id, updatedCart);
 };
 
 /**
- * Xóa sản phẩm khỏi giỏ hàng
+ * Xóa sản phẩm khỏi giỏ hàng (LUÔN dùng DB)
  * @param {number} productId - ID sản phẩm cần xóa
  * @returns {Promise<boolean>} true nếu thành công
  */
 export const removeFromCart = async (productId) => {
   const user = getCurrentUser();
   
-  if (user && user.id) {
-    // Đã đăng nhập: xóa khỏi DB
-    const currentCart = await getDbCart(user.id);
-    const updatedCart = currentCart.filter(item => item.id !== productId);
-    
-    return await saveDbCart(user.id, updatedCart);
-  } else {
-    // Chưa đăng nhập: xóa khỏi localStorage
-    const currentCart = getLocalCart();
-    const updatedCart = currentCart.filter(item => item.id !== productId);
-    
-    saveLocalCart(updatedCart);
-    return true;
+  if (!user || !user.id) {
+    console.error('User not logged in');
+    return false;
   }
+
+  // Luôn xóa khỏi DB
+  const currentCart = await getDbCart(user.id);
+  const updatedCart = currentCart.filter(item => String(item.id) !== String(productId));
+  
+  return await saveDbCart(user.id, updatedCart);
 };
 
 /**

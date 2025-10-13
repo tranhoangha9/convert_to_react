@@ -118,7 +118,7 @@ class Login extends Component {
           </form>
 
           <div className="auth-footer">
-            <p>Demo: admin / 123123</p>
+            <p>Demo: tranhoangha9@gmail.com ||| 123123123</p>
             <p className="auth-link">
               Bạn chưa có tài khoản? <Link href="/auth/register">Đăng ký tại đây</Link>
             </p>

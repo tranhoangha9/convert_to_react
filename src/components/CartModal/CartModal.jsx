@@ -14,11 +14,11 @@ class CartModal extends Component {
         this.checkCartInterval = null;
     }
 
-    componentDidMount() {
-        this.loadCartItems();
+    async componentDidMount() {
+        await this.loadCartItems();
         this.checkCartInterval = setInterval(() => {
             this.loadCartItems();
-        }, 1000);
+        }, 2000);
     }
 
     componentWillUnmount() {
@@ -27,37 +27,41 @@ class CartModal extends Component {
         }
     }
 
-    loadCartItems = () => {
-        const savedCart = localStorage.getItem('cartItems');
-        if (savedCart) {
-            const newItems = JSON.parse(savedCart);
-            if (JSON.stringify(this.state.items) !== JSON.stringify(newItems)) {
-                this.setState({ items: newItems });
+    loadCartItems = async () => {
+        try {
+            const { getCart } = await import('@/lib/cartService');
+            const items = await getCart();
+            
+            if (JSON.stringify(this.state.items) !== JSON.stringify(items)) {
+                this.setState({ items });
             }
+        } catch (error) {
+            console.error('Error loading cart:', error);
         }
     }
 
-    updateQuantity = (id, change) => {
-        this.setState(prevState => {
-            const updatedItems = prevState.items.map(item => 
-                item.id === id 
-                    ? {...item, quantity: Math.max(1, item.quantity + change)}
-                    : item
-            );
-            localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-            const event = new Event('storage');
-            event.key = 'cartItems';
-            window.dispatchEvent(event);
-            return { items: updatedItems };
-        });
+    updateQuantity = async (id, change) => {
+        try {
+            const item = this.state.items.find(i => i.id === id);
+            if (!item) return;
+
+            const newQuantity = Math.max(1, item.quantity + change);
+            const { updateCartItemQuantity } = await import('@/lib/cartService');
+            await updateCartItemQuantity(id, newQuantity);
+            await this.loadCartItems();
+        } catch (error) {
+            console.error('Error updating quantity:', error);
+        }
     }
 
-    removeItem = (id) => {
-        this.setState(prevState => {
-            const updatedItems = prevState.items.filter(item => item.id !== id);
-            localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-            return { items: updatedItems };
-        });
+    removeItem = async (id) => {
+        try {
+            const { removeFromCart } = await import('@/lib/cartService');
+            await removeFromCart(id);
+            await this.loadCartItems();
+        } catch (error) {
+            console.error('Error removing item:', error);
+        }
     }
 
     getSubtotal = () => {
