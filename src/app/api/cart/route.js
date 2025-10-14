@@ -56,7 +56,6 @@ export async function GET(request) {
 /**
  * POST /api/cart
  * Lưu giỏ hàng của user vào DB
- * Body: { userId: number, cartItems: Array }
  */
 export async function POST(request) {
   try {

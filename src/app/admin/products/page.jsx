@@ -1,117 +1,398 @@
 'use client';
 import React, { Component } from 'react';
+import Link from 'next/link';
 import '../admin.css';
 
 class AdminProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: []
+      products: [],
+      loading: false,
+      showForm: false,
+      editingProduct: null,
+      formData: {
+        name: '',
+        price: '',
+        originalPrice: '',
+        description: '',
+        shortDescription: '',
+        image: '',
+        sku: '',
+        stock: 0,
+        categoryId: null,
+        isActive: true,
+        isFeatured: false
+      }
     };
   }
 
+  async componentDidMount() {
+    await this.fetchProducts();
+  }
+
+  fetchProducts = async () => {
+    try {
+      this.setState({ loading: true });
+      const response = await fetch('/api/admin/products');
+      const data = await response.json();
+      
+      if (data.success) {
+        this.setState({ products: data.products });
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      alert('Lỗi khi tải danh sách sản phẩm');
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+  handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    this.setState(prevState => ({
+      formData: {
+        ...prevState.formData,
+        [name]: type === 'checkbox' ? checked : value
+      }
+    }));
+  }
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    const { formData, editingProduct } = this.state;
+
+    try {
+      this.setState({ loading: true });
+
+      const url = '/api/admin/products';
+      const method = editingProduct ? 'PUT' : 'POST';
+      const body = editingProduct 
+        ? { ...formData, id: editingProduct.id }
+        : formData;
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message);
+        this.resetForm();
+        await this.fetchProducts();
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+      alert('Lỗi khi lưu sản phẩm');
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+  handleEdit = (product) => {
+    this.setState({
+      showForm: true,
+      editingProduct: product,
+      formData: {
+        name: product.name,
+        price: product.price,
+        originalPrice: product.originalPrice || '',
+        description: product.description || '',
+        shortDescription: product.shortDescription || '',
+        image: product.image || '',
+        sku: product.sku || '',
+        stock: product.stock,
+        categoryId: product.categoryId,
+        isActive: product.isActive,
+        isFeatured: product.isFeatured
+      }
+    });
+  }
+
+  handleDelete = async (id) => {
+    if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+
+    try {
+      this.setState({ loading: true });
+      const response = await fetch(`/api/admin/products?id=${id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message);
+        await this.fetchProducts();
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Lỗi khi xóa sản phẩm');
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+  resetForm = () => {
+    this.setState({
+      showForm: false,
+      editingProduct: null,
+      formData: {
+        name: '',
+        price: '',
+        originalPrice: '',
+        description: '',
+        shortDescription: '',
+        image: '',
+        sku: '',
+        stock: 0,
+        categoryId: null,
+        isActive: true,
+        isFeatured: false
+      }
+    });
+  }
+
+  toggleForm = () => {
+    this.setState(prevState => ({
+      showForm: !prevState.showForm
+    }));
+    if (this.state.showForm) {
+      this.resetForm();
+    }
+  }
+
   render() {
+    const { products, loading, showForm, editingProduct, formData } = this.state;
+
     return (
       <div className="admin-container">
         <div className="admin-sidebar">
           <h2>Admin Panel</h2>
           <nav className="admin-nav">
-            <a href="/admin/products" className="admin-nav-item active">Quản lý sản phẩm</a>
-            <a href="/admin/banners" className="admin-nav-item">Quản lý Banner</a>
-            <a href="/admin/notifications" className="admin-nav-item">Quản lý Thông báo</a>
+            <Link href="/admin/products" className="admin-nav-item active">Quản lý sản phẩm</Link>
+            <Link href="/admin/banners" className="admin-nav-item">Quản lý Banner</Link>
+            <Link href="/admin/notifications" className="admin-nav-item">Quản lý Thông báo</Link>
           </nav>
         </div>
 
         <div className="admin-content">
           <div className="admin-header">
             <h1>Quản lý sản phẩm</h1>
-            <button className="admin-btn-primary">Thêm sản phẩm mới</button>
+            <button className="admin-btn-primary" onClick={this.toggleForm}>
+              {showForm ? 'Đóng form' : 'Thêm sản phẩm mới'}
+            </button>
           </div>
 
-          <div className="admin-card">
-            <div className="admin-form">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Tên sản phẩm</label>
-                  <input type="text" placeholder="Nhập tên sản phẩm" />
+          {showForm && (
+            <div className="admin-card">
+              <h3>{editingProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới'}</h3>
+              <form onSubmit={this.handleSubmit} className="admin-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Tên sản phẩm *</label>
+                    <input 
+                      type="text" 
+                      name="name"
+                      value={formData.name}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập tên sản phẩm" 
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>SKU</label>
+                    <input 
+                      type="text" 
+                      name="sku"
+                      value={formData.sku}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập mã SKU" 
+                    />
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label>SKU</label>
-                  <input type="text" placeholder="Nhập mã SKU" />
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Giá *</label>
+                    <input 
+                      type="number" 
+                      name="price"
+                      value={formData.price}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập giá" 
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Giá gốc</label>
+                    <input 
+                      type="number" 
+                      name="originalPrice"
+                      value={formData.originalPrice}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập giá gốc" 
+                      step="0.01"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Giá gốc</label>
-                  <input type="number" placeholder="Nhập giá gốc" />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Số lượng</label>
+                    <input 
+                      type="number" 
+                      name="stock"
+                      value={formData.stock}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập số lượng" 
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>URL hình ảnh</label>
+                    <input 
+                      type="text" 
+                      name="image"
+                      value={formData.image}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập URL hình ảnh" 
+                    />
+                  </div>
                 </div>
+
                 <div className="form-group">
-                  <label>Giá khuyến mãi</label>
-                  <input type="number" placeholder="Nhập giá khuyến mãi" />
+                  <label>Mô tả ngắn</label>
+                  <input 
+                    type="text" 
+                    name="shortDescription"
+                    value={formData.shortDescription}
+                    onChange={this.handleInputChange}
+                    placeholder="Nhập mô tả ngắn" 
+                  />
                 </div>
-              </div>
 
-              <div className="form-row">
                 <div className="form-group">
-                  <label>Danh mục</label>
-                  <select>
-                    <option>Chọn danh mục</option>
-                    <option>Handbags</option>
-                    <option>Watches</option>
-                    <option>Skincare</option>
-                  </select>
+                  <label>Mô tả chi tiết</label>
+                  <textarea 
+                    rows="4" 
+                    name="description"
+                    value={formData.description}
+                    onChange={this.handleInputChange}
+                    placeholder="Nhập mô tả chi tiết"
+                  ></textarea>
                 </div>
-                <div className="form-group">
-                  <label>Số lượng</label>
-                  <input type="number" placeholder="Nhập số lượng" />
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        name="isActive"
+                        checked={formData.isActive}
+                        onChange={this.handleInputChange}
+                      />
+                      <span>Kích hoạt</span>
+                    </label>
+                  </div>
+                  <div className="form-group">
+                    <label className="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        name="isFeatured"
+                        checked={formData.isFeatured}
+                        onChange={this.handleInputChange}
+                      />
+                      <span>Nổi bật</span>
+                    </label>
+                  </div>
                 </div>
-              </div>
 
-              <div className="form-group">
-                <label>Mô tả ngắn</label>
-                <input type="text" placeholder="Nhập mô tả ngắn" />
-              </div>
-
-              <div className="form-group">
-                <label>Mô tả chi tiết</label>
-                <textarea rows="4" placeholder="Nhập mô tả chi tiết"></textarea>
-              </div>
-
-              <div className="form-group">
-                <label>Hình ảnh</label>
-                <input type="file" accept="image/*" />
-              </div>
-
-              <div className="form-actions">
-                <button className="admin-btn-primary">Lưu sản phẩm</button>
-                <button className="admin-btn-secondary">Hủy</button>
-              </div>
+                <div className="form-actions">
+                  <button type="submit" className="admin-btn-primary" disabled={loading}>
+                    {loading ? 'Đang lưu...' : 'Lưu sản phẩm'}
+                  </button>
+                  <button type="button" className="admin-btn-secondary" onClick={this.resetForm}>
+                    Hủy
+                  </button>
+                </div>
+              </form>
             </div>
-          </div>
+          )}
 
           <div className="admin-card" style={{ marginTop: '30px' }}>
             <h3>Danh sách sản phẩm</h3>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tên sản phẩm</th>
-                  <th>Giá</th>
-                  <th>Danh mục</th>
-                  <th>Số lượng</th>
-                  <th>Trạng thái</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '40px' }}>
-                    Chưa có sản phẩm nào
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>Đang tải...</div>
+            ) : (
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: 'center', padding: '40px' }}>
+                        Chưa có sản phẩm nào
+                      </td>
+                    </tr>
+                  ) : (
+                    products.map(product => (
+                      <tr key={product.id}>
+                        <td>{product.id}</td>
+                        <td>
+                          {product.image && (
+                            <img src={product.image} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                          )}
+                        </td>
+                        <td>{product.name}</td>
+                        <td>${parseFloat(product.price).toFixed(2)}</td>
+                        <td>{product.stock}</td>
+                        <td>
+                          <span style={{ 
+                            padding: '4px 8px', 
+                            borderRadius: '4px', 
+                            fontSize: '12px',
+                            background: product.isActive ? '#d4edda' : '#f8d7da',
+                            color: product.isActive ? '#155724' : '#721c24'
+                          }}>
+                            {product.isActive ? 'Hoạt động' : 'Tắt'}
+                          </span>
+                        </td>
+                        <td>
+                          <button 
+                            onClick={() => this.handleEdit(product)}
+                            style={{ marginRight: '8px', padding: '4px 12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                          >
+                            Sửa
+                          </button>
+                          <button 
+                            onClick={() => this.handleDelete(product.id)}
+                            style={{ padding: '4px 12px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                          >
+                            Xóa
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>

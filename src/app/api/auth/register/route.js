@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -35,15 +34,12 @@ export async function POST(request) {
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user
+    // Create user without hashing password
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        password: hashedPassword,
+        password: password, // Lưu trực tiếp không hash
         role: 'user',
         isActive: true
       }

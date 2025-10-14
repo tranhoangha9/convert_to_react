@@ -1,30 +1,37 @@
 'use client';
 import React, { Component } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import './cart.css';
+
+// HOC để sử dụng useRouter trong class component
+function withRouter(Component) {
+  return function WrappedComponent(props) {
+    const router = useRouter();
+    return <Component {...props} router={router} />;
+  };
+}
 
 class Cart extends Component {
   state = {
-    cartItems: [
-      { id: 1, name: "Blossom Pouch", description: "Grande", price: 39.49, quantity: 1, image: "/assets/images/newarrival1.png" },
-      { id: 2, name: "Leather Coach Bag", description: "Coach", price: 54.69, quantity: 2, image: "/assets/images/newarrival2.png" },
-      { id: 3, name: "Brown Strap Bag", description: "Remus", price: 57.00, quantity: 1, image: "/assets/images/newarrival3.png" },
-      { id: 4, name: "Black Bag", description: "Boujee", price: 56.49, quantity: 1, image: "/assets/images/newarrival4.png" }
-    ],
+    cartItems: [],
     shipping: 0,
     discount: 0,
-    isCouponApplied: false
+    isCouponApplied: false,
+    loading: false
   };
 
-  componentDidMount() {
-    this.loadCartFromStorage();
+  async componentDidMount() {
+    await this.loadCartFromService();
   }
 
-  loadCartFromStorage = () => {
-    if (typeof window !== 'undefined') {
-      const savedCart = localStorage.getItem('cartItems');
-      if (savedCart) {
-        this.setState({ cartItems: JSON.parse(savedCart) });
-      }
+  loadCartFromService = async () => {
+    try {
+      const { getCart } = await import('@/lib/cartService');
+      const cartItems = await getCart();
+      this.setState({ cartItems });
+    } catch (error) {
+      console.error('Error loading cart:', error);
     }
   }
 
@@ -34,17 +41,22 @@ class Cart extends Component {
       const { cartItems } = this.state;
       const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const discount = subtotal * 0.5;
-      
+
       this.setState({
         discount: discount,
         isCouponApplied: true
       });
-      
+
+      // Lưu discount vào sessionStorage (mất khi đóng tab)
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('cartDiscount', discount.toString());
+      }
+
       const removeBtn = document.querySelector('.coupon-remove-btn');
       if (removeBtn) {
         removeBtn.style.display = 'inline-block';
       }
-      
+
       alert('Áp dụng coupon thành công! Giảm 50%');
     } else {
       alert('Mã coupon không đúng!');
@@ -56,49 +68,55 @@ class Cart extends Component {
       discount: 0,
       isCouponApplied: false
     });
-    
+
+    // Xóa discount khỏi sessionStorage
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('cartDiscount');
+    }
+
     const removeBtn = document.querySelector('.coupon-remove-btn');
     if (removeBtn) {
       removeBtn.style.display = 'none';
     }
-    
+
     const couponInput = document.getElementById('coupon-input');
     if (couponInput) {
       couponInput.value = '';
     }
   }
 
-  removeFromCart = (id) => {
-    this.setState(prev => {
-      const newCartItems = prev.cartItems.filter(item => item.id !== id);
-      
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('cartItems', JSON.stringify(newCartItems));
-      }
-      
-      return { cartItems: newCartItems };
-    });
+  removeFromCart = async (id) => {
+    try {
+      const { removeFromCart } = await import('@/lib/cartService');
+      await removeFromCart(id);
+      await this.loadCartFromService();
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
   }
 
-  placeOrder = () => {
+  handlePlaceOrder = async () => {
+    const { getCurrentUser } = await import('@/lib/cartService');
+    const user = getCurrentUser();
+
+    if (!user || !user.id) {
+      const currentUrl = encodeURIComponent(window.location.pathname);
+      window.location.href = `/auth/login?redirect=${currentUrl}`;
+      return;
+    }
+
     const { cartItems } = this.state;
     if (cartItems.length === 0) {
       alert('Giỏ hàng trống!');
       return;
     }
-    
-    const confirmOrder = window.confirm('Bạn xác nhận muốn đặt hàng?');
-    if (confirmOrder) {
-      alert('Đặt hàng thành công!');
-      this.setState({ cartItems: [] });
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('cartItems');
-      }
-    }
+
+    // Chuyển sang checkout (discount đã lưu trong sessionStorage)
+    this.props.router.push('/checkout');
   }
 
   render() {
-    const { cartItems, discount } = this.state;
+    const { cartItems, discount, loading } = this.state;
     const displayTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = displayTotal > 200 ? 0 : (displayTotal > 0 ? 10 : 0);
     const displayGrandTotal = displayTotal + shipping - discount;
@@ -106,9 +124,9 @@ class Cart extends Component {
     return (
       <>
         <section className="cart-breadcrumbs">
-          <a href="/">Home</a>
+          <Link href="/">Home</Link>
           <span className="breadcrumb-separator">&gt;</span>
-          <a className="breadcrumb-current" href="/cart">My Cart</a>
+          <span className="breadcrumb-current">My Cart</span>
         </section>
 
         <section className="cart-header">
@@ -164,7 +182,7 @@ class Cart extends Component {
 
             <div className="summary-item">
               <span className="summary-label">Discount</span>
-              <span className="summary-value discount-value">-${discount.toFixed(2)}</span>
+              <span className="summary-value discount-value">${discount.toFixed(2)}</span>
             </div>
 
               <div className="summary-item">
@@ -178,8 +196,14 @@ class Cart extends Component {
               </div>
 
               <div className="order-buttons">
-                <button className="btn-place-order" onClick={this.placeOrder}>Place Order</button>
-                <button className="btn-continue">Continue Shopping</button>
+                <button
+                  className="btn-place-order"
+                  onClick={this.handlePlaceOrder}
+                  disabled={loading}
+                >
+                  {loading ? 'Đang xử lý...' : 'Proceed to Checkout'}
+                </button>
+                <Link href="/" className="btn-continue">Continue Shopping</Link>
               </div>
             </div>
           </div>
@@ -196,7 +220,7 @@ class Cart extends Component {
                 </svg>
               </label>
               <div className="coupon-form">
-                <input type="text" id="coupon-input" className="coupon-input" placeholder="Enter coupon code" />
+                <input type="text" id="coupon-input" className="coupon-input" placeholder="Apply coupon code" />
                 <button className="coupon-btn" onClick={this.applyCoupon}>CHECK</button>
                 <button className="coupon-remove-btn" onClick={this.removeCoupon} style={{display: 'none'}}>REMOVE COUPON</button>
               </div>
@@ -208,4 +232,4 @@ class Cart extends Component {
   }
 }
 
-export default Cart;
+export default withRouter(Cart);

@@ -286,42 +286,42 @@ class CategoryPage extends Component {
                           y="4"
                           width="4.44444"
                           height="4.57143"
-                          fill="#B6B6B6"
+                          fill="currentColor"
                         />
                         <rect
                           x="2"
                           y="9.71436"
                           width="4.44444"
                           height="4.57143"
-                          fill="#B6B6B6"
+                          fill="currentColor"
                         />
                         <rect
                           x="2"
                           y="15.4287"
                           width="4.44444"
                           height="4.57143"
-                          fill="#B6B6B6"
+                          fill="currentColor"
                         />
                         <rect
                           x="7.55554"
                           y="4"
                           width="14.4444"
                           height="4.57143"
-                          fill="#B6B6B6"
+                         fill="currentColor"
                         />
                         <rect
                           x="7.55554"
                           y="9.71436"
                           width="14.4444"
                           height="4.57143"
-                          fill="#B6B6B6"
+                         fill="currentColor"
                         />
                         <rect
                           x="7.55554"
                           y="15.4287"
                           width="14.4444"
                           height="4.57143"
-                          fill="#B6B6B6"
+                          fill="currentColor"
                         />
                       </svg>
                     </button>

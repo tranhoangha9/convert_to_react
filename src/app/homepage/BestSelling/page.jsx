@@ -7,13 +7,34 @@ class BestSelling extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: [
-        { id: 1, brand: "Grande", name: "Blossom Pouch", price: 39.49, image: "/assets/images/newarrival1.png" },
-        { id: 2, brand: "Coach", name: "Leather Coach Bag", price: 54.69, image: "/assets/images/newarrival2.png" },
-        { id: 3, brand: "Remus", name: "Brown Strap Bag", price: 57.00, image: "/assets/images/newarrival3.png" },
-        { id: 4, brand: "Boujee", name: "Black Bag", price: 56.49, image: "/assets/images/newarrival4.png" }
-      ]
+      products: [],
+      loading: true,
+      error: null
     };
+  }
+
+  async componentDidMount() {
+    await this.loadProducts();
+  }
+
+  loadProducts = async () => {
+    try {
+      this.setState({ loading: true, error: null });
+
+      const response = await fetch('/api/products?limit=4&page=1');
+      const data = await response.json();
+
+      if (data.success) {
+        this.setState({ products: data.products });
+      } else {
+        this.setState({ error: data.error || 'Không thể tải sản phẩm' });
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+      this.setState({ error: 'Lỗi kết nối mạng' });
+    } finally {
+      this.setState({ loading: false });
+    }
   }
 
   addToCart = async (product) => {
@@ -21,9 +42,28 @@ class BestSelling extends Component {
     try {
       const { addToCart: addToCartService } = await import('@/lib/cartService');
       const success = await addToCartService(product, 1);
-      
+
       console.log('Add to cart result (homepage):', success);
-      
+
+      if (success) {
+        alert(`Đã thêm "${product.name}" vào giỏ hàng!`);
+      } else {
+        alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
+    }
+  }
+
+  addToCart = async (product) => {
+    console.log('Adding to cart (homepage):', product);
+    try {
+      const { addToCart: addToCartService } = await import('@/lib/cartService');
+      const success = await addToCartService(product, 1);
+
+      console.log('Add to cart result (homepage):', success);
+
       if (success) {
         alert(`Đã thêm "${product.name}" vào giỏ hàng!`);
       } else {
@@ -36,8 +76,32 @@ class BestSelling extends Component {
   }
 
   render() {
-    const { products } = this.state;
-    
+    const { products, loading, error } = this.state;
+
+    if (loading) {
+      return (
+        <section className="new-arrivals">
+          <div className="arrivals-header">
+            <h2>New Arrivals</h2>
+            <Link href="/category-page" className="view-all-btn">View All</Link>
+          </div>
+          <div className="loading">Đang tải sản phẩm...</div>
+        </section>
+      );
+    }
+
+    if (error) {
+      return (
+        <section className="new-arrivals">
+          <div className="arrivals-header">
+            <h2>New Arrivals</h2>
+            <Link href="/category-page" className="view-all-btn">View All</Link>
+          </div>
+          <div className="error">Lỗi: {error}</div>
+        </section>
+      );
+    }
+
     return (
       <section className="new-arrivals">
         <div className="arrivals-header">
@@ -55,12 +119,12 @@ class BestSelling extends Component {
                     <svg width="22" height="19" viewBox="0 0 22 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M11 17.541C11 17.541 1.625 12.291 1.625 5.91602C1.62519 4.78927 2.01561 3.69737 2.72989 2.82594C3.44416 1.95452 4.4382 1.35738 5.54299 1.13603C6.64778 0.914685 7.79514 1.0828 8.78999 1.6118C9.78484 2.1408 10.5658 2.99803 11 4.03774L11 4.03775C11.4342 2.99804 12.2152 2.14081 13.21 1.61181C14.2049 1.08281 15.3522 0.914686 16.457 1.13603C17.5618 1.35737 18.5558 1.95452 19.2701 3.53493C19.9844 3.69737 20.3748 4.78927 20.375 5.91602C20.375 12.291 11 17.541 11 17.541Z" stroke="#13101E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    <svg 
-                      className="add-to-cart-icon" 
-                      width="20" 
-                      height="20" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
+                    <svg
+                      className="add-to-cart-icon"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                       onClick={() => this.addToCart(product)}
                     >

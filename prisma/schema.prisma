@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,37 +8,48 @@ datasource db {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  description String?  @db.Text
-  image       String?  @db.VarChar(500)
-  isActive    Boolean  @default(true)
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  description String?   @db.Text
+  image       String?   @db.VarChar(500)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   products    Product[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
   @@map("Categories")
 }
 
+model Discount {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(255)
+  value     Decimal  @db.Decimal(10, 2)
+  isActive  Boolean  @default(true)
+  orders    Order[]
+
+  @@map("Discounts")
+}
+
 model Product {
-  id              Int         @id @default(autoincrement())
-  name            String      @db.VarChar(255)
-  price           Decimal     @db.Decimal(10, 2)
-  originalPrice   Decimal?    @db.Decimal(10, 2)
-  description     String?     @db.Text
-  shortDescription String?    @db.VarChar(500)
-  image           String?     @db.VarChar(500)
-  images          String?     @db.Text // JSON array of images
-  sku             String?     @unique @db.VarChar(100)
-  stock           Int         @default(0)
-  categoryId      Int?
-  category        Category?   @relation(fields: [categoryId], references: [id])
-  isActive        Boolean     @default(true)
-  isFeatured      Boolean     @default(false)
-  orderItems      OrderItem[] // Thêm dòng này
-  cartItems       CartItem[]  // Quan hệ với CartItem
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id               Int         @id @default(autoincrement())
+  name             String      @db.VarChar(255)
+  price            Decimal     @db.Decimal(10, 2)
+  originalPrice    Decimal?    @db.Decimal(10, 2)
+  description      String?     @db.Text
+  shortDescription String?     @db.VarChar(500)
+  image            String?     @db.VarChar(500)
+  images           String?     @db.Text
+  sku              String?     @unique @db.VarChar(100)
+  stock            Int         @default(0)
+  categoryId       Int?
+  isActive         Boolean     @default(true)
+  isFeatured       Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  orderItems       OrderItem[]
+  cartItems        CartItem[]
+  category         Category?   @relation(fields: [categoryId], references: [id])
 
   @@map("Products")
 }
@@ -53,28 +61,33 @@ model User {
   password  String   @db.VarChar(255)
   phone     String?  @db.VarChar(20)
   address   String?  @db.Text
-  avatar    String?  @db.NVarChar(MAX)
   role      String   @default("user") @db.VarChar(50)
   isActive  Boolean  @default(true)
-  orders    Order[]
-  cart      Cart?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  avatar    String?  @db.NVarChar(Max)
+  cart      Cart?
+  orders    Order[]
 
   @@map("Users")
 }
 
 model Order {
-  id               Int         @id @default(autoincrement())
-  userId           Int?
-  user             User?       @relation(fields: [userId], references: [id])
-  totalAmount      Decimal     @db.Decimal(10, 2)
-  status           String      @default("pending") @db.VarChar(50)
-  shippingAddress  String?     @db.Text
-  notes            String?     @db.Text
-  orderItems       OrderItem[]
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  id              Int         @id @default(autoincrement())
+  userId          Int?
+  totalAmount     Decimal     @db.Decimal(10, 2)
+  discountId      Int?        // Liên kết với bảng Discounts
+  status          String      @default("pending") @db.VarChar(50)
+  paymentMethod   String?     @db.VarChar(50)
+  customerInfo    String?     @db.Text
+  paymentInfo     String?     @db.Text
+  shippingAddress String?     @db.Text
+  notes           String?     @db.Text
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItems      OrderItem[]
+  user            User?       @relation(fields: [userId], references: [id])
+  discount        Discount?   @relation(fields: [discountId], references: [id])
 
   @@map("Orders")
 }
@@ -82,59 +95,36 @@ model Order {
 model Cart {
   id        Int        @id @default(autoincrement())
   userId    Int        @unique
+  createdAt DateTime   @default(now(), map: "DF__Cart__createdAt__02FC7413")
+  updatedAt DateTime   @updatedAt
   user      User       @relation(fields: [userId], references: [id])
   items     CartItem[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
 
   @@map("Cart")
-}
-
-model CartItem {
-  id        Int      @id @default(autoincrement())
-  cartId    Int
-  cart      Cart     @relation(fields: [cartId], references: [id])
-  productId Int
-  product   Product  @relation(fields: [productId], references: [id])
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("CartItems")
 }
 
 model OrderItem {
   id        Int      @id @default(autoincrement())
   orderId   Int
-  order     Order    @relation(fields: [orderId], references: [id])
   productId Int
-  product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 
   @@map("OrderItems")
 }
 
-model Banner {
+model CartItem {
   id        Int      @id @default(autoincrement())
-  title     String?  @db.NVarChar(255)
-  imageUrl  String   @db.NVarChar(500)
-  link      String?  @db.NVarChar(500)
-  isActive  Boolean  @default(true)
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
 
-  @@map("Banners")
-}
-
-model Notification {
-  id        Int      @id @default(autoincrement())
-  message   String   @db.NVarChar(500)
-  isActive  Boolean  @default(true)
-  type      String   @default("info") @db.NVarChar(50)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("Notifications")
+  @@map("CartItem")
 }

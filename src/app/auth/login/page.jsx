@@ -14,6 +14,16 @@ class Login extends Component {
     };
   }
 
+  componentDidMount() {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectUrl = urlParams.get('redirect');
+      if (redirectUrl) {
+        this.setState({ redirectUrl });
+      }
+    }
+  }
+
   handleInputChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -23,13 +33,13 @@ class Login extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    const { username, password } = this.state;
+    const { username, password, redirectUrl } = this.state;
 
     this.setState({ loading: true, error: '' });
     if (!username || !password) {
-      this.setState({ 
+      this.setState({
         error: 'Vui lòng nhập đầy đủ thông tin',
-        loading: false 
+        loading: false
       });
       return;
     }
@@ -50,18 +60,27 @@ class Login extends Component {
 
       if (data.success) {
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = '/account';
+
+        try {
+          const { mergeLocalCartToDb } = await import('@/lib/cartService');
+          await mergeLocalCartToDb(data.user.id);
+        } catch (error) {
+          console.error('Error merging cart:', error);
+        }
+
+        const redirectTo = redirectUrl || '/account';
+        window.location.href = redirectTo;
       } else {
-        this.setState({ 
+        this.setState({
           error: data.error || 'Đăng nhập thất bại',
-          loading: false 
+          loading: false
         });
       }
     } catch (error) {
       console.error('Login error:', error);
-      this.setState({ 
+      this.setState({
         error: 'Có lỗi xảy ra khi đăng nhập',
-        loading: false 
+        loading: false
       });
     }
   }
@@ -74,7 +93,7 @@ class Login extends Component {
           <div className="auth-header">
             <h1>Đăng nhập</h1>
           </div>
-          
+
           <form onSubmit={this.handleSubmit} className="auth-form">
             <div className="form-group">
               <label htmlFor="username">Tên đăng nhập</label>
@@ -108,8 +127,8 @@ class Login extends Component {
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="auth-button"
               disabled={loading}
             >
