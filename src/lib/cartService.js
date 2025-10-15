@@ -1,18 +1,6 @@
+import { getCurrentUser } from './authService';
+
 const CART_STORAGE_KEY = 'cartItems';
-
-export const getCurrentUser = () => {
-  if (typeof window === 'undefined') return null;
-
-  const userStr = localStorage.getItem('user');
-  if (!userStr) return null;
-
-  try {
-    return JSON.parse(userStr);
-  } catch (error) {
-    console.error('Error parsing user data:', error);
-    return null;
-  }
-};
 
 const getLocalCart = () => {
   if (typeof window === 'undefined') return [];
@@ -50,7 +38,6 @@ const getDbCart = async (userId) => {
   try {
     const response = await fetch(`/api/cart?userId=${userId}`);
 
-    // Kiểm tra response có phải JSON không
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       console.error('Response is not JSON:', contentType);
@@ -86,7 +73,6 @@ const saveDbCart = async (userId, cartItems) => {
       body: JSON.stringify({ userId, cartItems }),
     });
 
-    // Kiểm tra response có phải JSON không
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       console.error('Response is not JSON:', contentType);

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './cart.css';
 
-// HOC để sử dụng useRouter trong class component
 function withRouter(Component) {
   return function WrappedComponent(props) {
     const router = useRouter();
@@ -96,7 +95,7 @@ class Cart extends Component {
   }
 
   handlePlaceOrder = async () => {
-    const { getCurrentUser } = await import('@/lib/cartService');
+    const { getCurrentUser } = await import('@/lib/authService');
     const user = getCurrentUser();
 
     if (!user || !user.id) {

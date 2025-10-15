@@ -45,7 +45,6 @@ export async function GET(request) {
   }
 }
 
-// POST - Tạo sản phẩm mới
 export async function POST(request) {
   try {
     const data = await request.json();
@@ -63,7 +62,6 @@ export async function POST(request) {
       isFeatured
     } = data;
 
-    // Validate
     if (!name || !price) {
       return NextResponse.json(
         { success: false, error: 'Tên và giá sản phẩm là bắt buộc' },
@@ -103,7 +101,6 @@ export async function POST(request) {
   }
 }
 
-// PUT - Cập nhật sản phẩm
 export async function PUT(request) {
   try {
     const data = await request.json();
@@ -116,7 +113,6 @@ export async function PUT(request) {
       );
     }
 
-    // Convert types
     if (updateData.price) updateData.price = parseFloat(updateData.price);
     if (updateData.originalPrice) updateData.originalPrice = parseFloat(updateData.originalPrice);
     if (updateData.stock) updateData.stock = parseInt(updateData.stock);
@@ -143,7 +139,6 @@ export async function PUT(request) {
   }
 }
 
-// DELETE - Xóa sản phẩm
 export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);

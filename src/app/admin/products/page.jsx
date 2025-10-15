@@ -7,6 +7,7 @@ class AdminProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      categories: [],
       products: [],
       loading: false,
       showForm: false,
@@ -20,15 +21,37 @@ class AdminProducts extends Component {
         image: '',
         sku: '',
         stock: 0,
-        categoryId: null,
+        categoryId: 1,
         isActive: true,
-        isFeatured: false
+        isFeatured: false,
+        imagePreview: ''
       }
     };
+    this.imageInputRef = React.createRef();
   }
 
   async componentDidMount() {
-    await this.fetchProducts();
+    await Promise.all([
+      this.fetchProducts(),
+      this.fetchCategories()
+    ]);
+  }
+
+  fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+
+      if (data.success) {
+        this.setState({ categories: data.categories });
+      } else {
+        console.error('Error fetching categories:', data.error);
+        // Có thể hiển thị thông báo lỗi ở đây nếu cần
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      // Có thể hiển thị thông báo lỗi ở đây nếu cần
+    }
   }
 
   fetchProducts = async () => {
@@ -48,14 +71,17 @@ class AdminProducts extends Component {
     }
   }
 
-  handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  handleRemoveImage = () => {
     this.setState(prevState => ({
       formData: {
         ...prevState.formData,
-        [name]: type === 'checkbox' ? checked : value
+        image: '',
+        imagePreview: ''
       }
     }));
+    if (this.imageInputRef.current) {
+      this.imageInputRef.current.value = '';
+    }
   }
 
   handleSubmit = async (e) => {
@@ -109,7 +135,8 @@ class AdminProducts extends Component {
         stock: product.stock,
         categoryId: product.categoryId,
         isActive: product.isActive,
-        isFeatured: product.isFeatured
+        isFeatured: product.isFeatured,
+        imagePreview: product.image || ''
       }
     });
   }
@@ -139,6 +166,64 @@ class AdminProducts extends Component {
     }
   }
 
+  handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Tạo preview cho ảnh
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.setState(prevState => ({
+        formData: {
+          ...prevState.formData,
+          imagePreview: e.target.result
+        }
+      }));
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      // Upload ảnh lên server
+      const formDataUpload = new FormData();
+      formDataUpload.append('image', file);
+
+      const response = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: formDataUpload
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        this.setState(prevState => ({
+          formData: {
+            ...prevState.formData,
+            image: data.imageUrl
+          }
+        }));
+      } else {
+        alert('Lỗi khi upload ảnh: ' + data.error);
+        // Xóa preview nếu upload thất bại
+        this.setState(prevState => ({
+          formData: {
+            ...prevState.formData,
+            imagePreview: ''
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Lỗi khi upload ảnh');
+      // Xóa preview nếu upload thất bại
+      this.setState(prevState => ({
+        formData: {
+          ...prevState.formData,
+          imagePreview: ''
+        }
+      }));
+    }
+  }
+
   resetForm = () => {
     this.setState({
       showForm: false,
@@ -152,11 +237,15 @@ class AdminProducts extends Component {
         image: '',
         sku: '',
         stock: 0,
-        categoryId: null,
+        categoryId: 1,
         isActive: true,
-        isFeatured: false
+        isFeatured: false,
+        imagePreview: ''
       }
     });
+    if (this.imageInputRef.current) {
+      this.imageInputRef.current.value = '';
+    }
   }
 
   toggleForm = () => {
@@ -196,6 +285,35 @@ class AdminProducts extends Component {
               <form onSubmit={this.handleSubmit} className="admin-form">
                 <div className="form-row">
                   <div className="form-group">
+                    <label>Danh mục</label>
+                    <select
+                      name="categoryId"
+                      value={formData.categoryId}
+                      onChange={this.handleInputChange}
+                      disabled={this.state.categories.length === 0}
+                    >
+                      <option value="">Chọn danh mục</option>
+                      {this.state.categories.map(category => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>SKU</label>
+                    <input
+                      type="text"
+                      name="sku"
+                      value={formData.sku}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập mã SKU"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
                     <label>Tên sản phẩm *</label>
                     <input 
                       type="text" 
@@ -206,19 +324,6 @@ class AdminProducts extends Component {
                       required
                     />
                   </div>
-                  <div className="form-group">
-                    <label>SKU</label>
-                    <input 
-                      type="text" 
-                      name="sku"
-                      value={formData.sku}
-                      onChange={this.handleInputChange}
-                      placeholder="Nhập mã SKU" 
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
                   <div className="form-group">
                     <label>Giá *</label>
                     <input 
@@ -262,8 +367,31 @@ class AdminProducts extends Component {
                       name="image"
                       value={formData.image}
                       onChange={this.handleInputChange}
-                      placeholder="Nhập URL hình ảnh" 
+                      placeholder="Nhập URL hình ảnh"
                     />
+                  </div>
+                  <div className="form-group">
+                    <label>Hoặc tải lên hình ảnh</label>
+                    <input
+                      type="file"
+                      name="imageFile"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={this.handleImageUpload}
+                      ref={this.imageInputRef}
+                    />
+                    {formData.imagePreview && (
+                      <div className="image-preview">
+                        <img src={formData.imagePreview} alt="Preview" />
+                        <button
+                          type="button"
+                          className="remove-image-btn"
+                          onClick={this.handleRemoveImage}
+                          title="Xóa ảnh"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 

@@ -1,10 +1,9 @@
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '../../../lib/prisma';
 
 export async function POST(request) {
   try {
     const { customerInfo, paymentInfo, items, total, paymentMethod, userId } = await request.json();
 
-    // Validate required fields
     if (!customerInfo || !paymentInfo || !items || items.length === 0 || !userId) {
       return Response.json({
         success: false,
@@ -12,7 +11,6 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Validate user exists and is authenticated
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true, email: true, name: true }
@@ -40,7 +38,6 @@ export async function POST(request) {
       }
     });
 
-    // Create order items
     const orderItemsData = items.map(item => ({
       orderId: order.id,
       productId: item.id,

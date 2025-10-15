@@ -255,4 +255,46 @@
   .admin-table td {
     padding: 10px;
   }
+
+  .image-preview {
+    margin-top: 10px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+  }
+
+  .image-preview img {
+    max-width: 150px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e2e8f0;
+    object-fit: contain;
+  }
+
+  .remove-image-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s;
+  }
+
+  .remove-image-btn:hover {
+    background: #dc2626;
+  }
 }

@@ -38,16 +38,15 @@ class Account extends Component {
 
 
   checkAuth = async () => {
-    const user = localStorage.getItem('user');
+    const { getCurrentUser } = await import('@/lib/authService');
+    const user = getCurrentUser();
     if (!user) {
       window.location.href = '/auth/login';
       return;
     }
-    
+
     try {
-      const userData = JSON.parse(user);
-      
-      const response = await fetch(`/api/users/profile?userId=${userData.id}`);
+      const response = await fetch(`/api/users/profile?userId=${user.id}`);
       const data = await response.json();
       
       if (data.success) {
@@ -61,7 +60,7 @@ class Account extends Component {
           profileImageUrl: data.user.avatar || ''
         });
       } else {
-        this.setState({ user: userData });
+        this.setState({ user: user });
       }
     } catch (error) {
       console.error('Error checking auth:', error);
@@ -114,11 +113,12 @@ class Account extends Component {
 
       if (data.success) {
         const updatedUser = { ...user, ...updateData };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        
+        const { loginUser } = await import('@/lib/authService');
+        loginUser(updatedUser);
+
         this.setState({ 
           user: updatedUser,
-          error: '' 
+          error: ''
         });
         
         alert('Thông tin đã được lưu thành công!');
@@ -145,9 +145,9 @@ class Account extends Component {
     this.setState({ profileImage: null, profileImageUrl: null });
   }
 
-  handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('profileImage');
+  handleLogout = async () => {
+    const { logoutUser } = await import('@/lib/authService');
+    logoutUser();
     window.location.href = '/auth/login';
   }
 
@@ -294,9 +294,6 @@ class Account extends Component {
                 <label>Date of birth</label>
                 <div className="date-input">
                   <input type="date" value={this.state.dateOfBirth} onChange={this.handleInputChange} name="dateOfBirth"/>
-                  {/* <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg> */}
                 </div>
               </div>
             </div>

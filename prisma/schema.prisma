@@ -39,7 +39,6 @@ model Product {
   description      String?     @db.Text
   shortDescription String?     @db.VarChar(500)
   image            String?     @db.VarChar(500)
-  images           String?     @db.Text
   sku              String?     @unique @db.VarChar(100)
   stock            Int         @default(0)
   categoryId       Int?

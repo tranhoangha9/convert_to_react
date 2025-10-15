@@ -60,7 +60,7 @@ class Checkout extends Component {
 
   checkUserLogin = async () => {
     try {
-      const { getCurrentUser } = await import('@/lib/cartService');
+      const { getCurrentUser } = await import('@/lib/authService');
       const user = getCurrentUser();
 
       if (!user || !user.id) {
@@ -146,7 +146,7 @@ class Checkout extends Component {
     this.setState({ loading: true });
 
     try {
-      const { getCurrentUser } = await import('@/lib/cartService');
+      const { getCurrentUser } = await import('@/lib/authService');
       const user = getCurrentUser();
 
       const orderData = {

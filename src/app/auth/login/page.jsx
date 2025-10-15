@@ -59,7 +59,8 @@ class Login extends Component {
       const data = await response.json();
 
       if (data.success) {
-        localStorage.setItem('user', JSON.stringify(data.user));
+        const { loginUser } = await import('@/lib/authService');
+        loginUser(data.user);
 
         try {
           const { mergeLocalCartToDb } = await import('@/lib/cartService');
