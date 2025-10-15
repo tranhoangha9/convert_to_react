@@ -5,11 +5,11 @@ import Footer from '../components/Footer/page';
 import '../styles/globals.css';
 import '../components/Header/Header.css';
 import '../components/Footer/Footer.css';
-import './homepage/Notification/Notification.css';
-import './homepage/Banner/Banner.css';
-import './homepage/BestSelling/BestSelling.css';
-import './homepage/Collection/Collection.css';
-import './homepage/Brands/Brands.css';
+import './client/homepage/Notification/Notification.css';
+import './client/homepage/Banner/Banner.css';
+import './client/homepage/BestSelling/BestSelling.css';
+import './client/homepage/Collection/Collection.css';
+import './client/homepage/Brands/Brands.css';
 
 export const metadata = {
   title: "Cora'l ",

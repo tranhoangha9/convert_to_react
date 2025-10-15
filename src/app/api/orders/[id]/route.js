@@ -1,4 +1,4 @@
-import { prisma } from '../../../../../lib/prisma';
+import { prisma } from '../../../../lib/prisma';
 
 export async function GET(request) {
   try {
@@ -43,6 +43,12 @@ export async function GET(request) {
         id: order.id,
         totalAmount: order.totalAmount,
         discountId: order.discountId,
+        discount: order.discount ? {
+          id: order.discount.id,
+          code: order.discount.code,
+          name: order.discount.name,
+          value: order.discount.value
+        } : null,
         paymentMethod: order.paymentMethod,
         status: order.status,
         createdAt: order.createdAt,

@@ -24,7 +24,7 @@ class OrderSuccess extends Component {
 
   loadOrderDetails = async (orderId) => {
     try {
-      const response = await fetch(`/api/orders/${orderId}`);
+      const response = await fetch(`/api/orders/[id]?orderId=${orderId}`);
       const data = await response.json();
 
       if (data.success) {
@@ -54,7 +54,7 @@ class OrderSuccess extends Component {
         <div className="order-success-container">
           <div className="error">
             <h2>Không tìm thấy đơn hàng</h2>
-            <Link href="/account" className="btn-primary">Về tài khoản</Link>
+            <Link href="/client/account" className="btn-primary">Về tài khoản</Link>
           </div>
         </div>
       );
@@ -83,10 +83,13 @@ class OrderSuccess extends Component {
               <span>Tổng tiền:</span>
               <span>${order.totalAmount}</span>
             </div>
-            {order.discountId && (
+            {order.discount && (
               <div className="info-row">
-                <span>Đã áp dụng giảm giá</span>
-                <span className="discount-applied">Có</span>
+                <span>Giảm giá đã áp dụng:</span>
+                <div className="discount-info">
+                  <span className="discount-applied">{order.discount.name}</span>
+                  <span className="discount-code">({order.discount.code})</span>
+                </div>
               </div>
             )}
             <div className="info-row">
@@ -94,13 +97,13 @@ class OrderSuccess extends Component {
               <span>{order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Thẻ tín dụng'}</span>
             </div>
             <div className="info-row">
-              <span>Trạng thái:</span>
+              <span>Trạng thái đơn hàng:</span>
               <span className="status pending">Đang xử lý</span>
             </div>
           </div>
 
           <div className="order-actions">
-            <Link href="/account" className="btn-primary">Xem đơn hàng</Link>
+            <Link href="/client/account" className="btn-primary">Xem đơn hàng</Link>
             <Link href="/" className="btn-secondary">Tiếp tục mua sắm</Link>
           </div>
         </div>

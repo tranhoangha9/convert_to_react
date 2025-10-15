@@ -166,7 +166,7 @@ class Register extends Component {
 
           <div className="auth-footer">
             <p className="auth-link">
-              Đã có tài khoản? <Link href="/auth/login">Đăng nhập tại đây</Link>
+              Đã có tài khoản? <Link href="/client/auth/login">Đăng nhập tại đây</Link>
             </p>
           </div>
         </div>

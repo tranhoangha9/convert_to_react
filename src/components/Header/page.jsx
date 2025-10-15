@@ -76,7 +76,7 @@ class Header extends Component {
           <nav className="nav-menu">
             <label htmlFor="menu-toggle" className="menu-close">×</label>
             <ul className="nav-menu-list">
-              <li><Link href="/category-page">Handbags</Link></li>
+              <li><Link href="/client/category-page">Handbags</Link></li>
               <li><Link href="#">Watches</Link></li>
               <li><Link href="#">Skincare</Link></li>
               <li><Link href="#">Jewellery</Link></li>
@@ -86,7 +86,7 @@ class Header extends Component {
               <Link href="#"><svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M11 18.25C11 18.25 1.625 13 1.625 6.62501C1.62519 5.49826 2.01561 4.40635 2.72989 3.53493C3.44416 2.66351 4.4382 1.35738 5.54299 1.84501C6.64778 0.914685 7.79514 1.0828 8.78999 1.6118C9.78484 2.1408 10.5658 2.99803 11 4.03774L11 4.03775C11.4342 2.99804 12.2152 2.14081 13.21 1.61181C14.2049 1.08281 15.3522 0.914686 16.457 1.13603C17.5618 1.35737 18.5558 1.95452 19.2701 3.53493C19.9844 3.69737 20.3748 4.78927 20.375 5.91602C20.375 13 11 18.25 11 18.25Z" stroke="#1B4B66" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg></Link>
-              <Link href={user ? "/account" : "/auth/login"}>
+              <Link href={user ? "/client/account" : "/client/auth/login"}>
                 <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 18C3.33579 15.5226 6.50702 14 10 14C13.493 14 16.6642 15.5226 19 18M14.5 5.5C14.5 7.98528 12.4853 10 10 10C7.51472 10 5.5 7.98528 5.5 5.5C5.5 3.01472 7.51472 1 10 1C12.4853 1 14.5 3.01472 14.5 5.5Z" stroke="#1B4B66" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -121,7 +121,7 @@ class Header extends Component {
                     stroke="#1B4B66" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
-              <Link href={user ? "/account" : "/auth/login"}>
+              <Link href={user ? "/client/account" : "/client/auth/login"}>
                 <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M1 18C3.33579 15.5226 6.50702 14 10 14C13.493 14 16.6642 15.5226 19 18M14.5 5.5C14.5 7.98528 12.4853 10 10 10C7.51472 10 5.5 7.98528 5.5 5.5C5.5 3.01472 7.51472 1 10 1C12.4853 1 14.5 3.01472 14.5 5.5Z"

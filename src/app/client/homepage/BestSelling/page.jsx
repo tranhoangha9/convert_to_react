@@ -83,7 +83,7 @@ class BestSelling extends Component {
         <section className="new-arrivals">
           <div className="arrivals-header">
             <h2>New Arrivals</h2>
-            <Link href="/category-page" className="view-all-btn">View All</Link>
+            <Link href="/client/category-page" className="view-all-btn">View All</Link>
           </div>
           <div className="loading">Đang tải sản phẩm...</div>
         </section>
@@ -95,7 +95,7 @@ class BestSelling extends Component {
         <section className="new-arrivals">
           <div className="arrivals-header">
             <h2>New Arrivals</h2>
-            <Link href="/category-page" className="view-all-btn">View All</Link>
+            <Link href="/client/category-page" className="view-all-btn">View All</Link>
           </div>
           <div className="error">Lỗi: {error}</div>
         </section>

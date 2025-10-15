@@ -69,7 +69,7 @@ class Login extends Component {
           console.error('Error merging cart:', error);
         }
 
-        const redirectTo = redirectUrl || '/account';
+        const redirectTo = redirectUrl || '/client/account';
         window.location.href = redirectTo;
       } else {
         this.setState({
@@ -140,7 +140,7 @@ class Login extends Component {
           <div className="auth-footer">
             <p>Demo: tranhoangha9@gmail.com ||| 123123123</p>
             <p className="auth-link">
-              Bạn chưa có tài khoản? <Link href="/auth/register">Đăng ký tại đây</Link>
+              Bạn chưa có tài khoản? <Link href="/client/auth/register">Đăng ký tại đây</Link>
             </p>
           </div>
         </div>

@@ -38,7 +38,6 @@ class Checkout extends Component {
     await this.loadCartItems();
     await this.checkUserLogin();
 
-    // Load discount từ sessionStorage nếu có
     if (typeof window !== 'undefined') {
       const savedDiscount = sessionStorage.getItem('cartDiscount');
       if (savedDiscount) {
@@ -51,7 +50,6 @@ class Checkout extends Component {
     try {
       const { getCart } = await import('@/lib/cartService');
       const cartItems = await getCart();
-      // Discount sẽ được load từ sessionStorage trong componentDidMount
       this.setState({ cartItems });
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -64,7 +62,7 @@ class Checkout extends Component {
       const user = getCurrentUser();
 
       if (!user || !user.id) {
-        window.location.href = '/auth/login?redirect=/checkout';
+        window.location.href = '/client/auth/login?redirect=/client/checkout';
         return;
       }
 
@@ -106,7 +104,6 @@ class Checkout extends Component {
   handleContinueToPayment = () => {
     const { information } = this.state;
 
-    // Validate required fields
     if (!information.fullName || !information.mobileNumber || !information.state || !information.city) {
       alert('Vui lòng điền đầy đủ thông tin bắt buộc');
       return;
@@ -120,21 +117,19 @@ class Checkout extends Component {
   }
 
   handlePlaceOrder = async () => {
-    const { information, payment, cartItems } = this.state;
+    const { information, payment, cartItems, discount } = this.state;
 
     if (cartItems.length === 0) {
       alert('Giỏ hàng trống!');
       return;
     }
 
-    // Validate information
     if (!information.fullName || !information.mobileNumber || !information.state || !information.city) {
       alert('Vui lòng điền đầy đủ thông tin giao hàng');
       this.setState({ showInformation: true, showPayment: false });
       return;
     }
 
-    // Validate payment if card
     if (payment.method === 'card') {
       if (!payment.cardNumber || !payment.expiryDate || !payment.cvv || !payment.cardHolderName) {
         alert('Vui lòng điền đầy đủ thông tin thẻ');
@@ -154,7 +149,9 @@ class Checkout extends Component {
         customerInfo: information,
         paymentInfo: payment,
         cartItems: cartItems,
-        total: this.calculateTotal()
+        total: this.calculateTotal(),
+        discount: discount || 0,
+        discountCode: discount && discount > 0 ? 'giamgia' : null
       };
 
       const response = await fetch('/api/orders', {
@@ -171,8 +168,12 @@ class Checkout extends Component {
         const { clearCart } = await import('@/lib/cartService');
         await clearCart();
 
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('cartDiscount');
+        }
+
         alert('Đặt hàng thành công!');
-        window.location.href = `/order-success?orderId=${data.orderId}`;
+        window.location.href = `/client/order-success?orderId=${data.orderId}`;
       } else {
         alert(data.error || 'Có lỗi xảy ra khi đặt hàng');
       }
@@ -208,7 +209,7 @@ class Checkout extends Component {
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = subtotal > 200 ? 0 : 10;
-    const discountAmount = discount || 0; // Sử dụng biến discount từ destructuring
+    const discountAmount = discount || 0;
     const total = subtotal + shipping - discountAmount;
 
     return (
@@ -216,7 +217,7 @@ class Checkout extends Component {
         <section className="checkout-breadcrumbs">
           <Link href="/">Home</Link>
           <span className="breadcrumb-separator">&gt;</span>
-          <Link href="/cart">Cart</Link>
+          <Link href="/client/cart">Cart</Link>
           <span className="breadcrumb-separator">&gt;</span>
           <span className="breadcrumb-current">Checkout</span>
         </section>
@@ -230,7 +231,6 @@ class Checkout extends Component {
         <section className="checkout-main-layout">
           <div className="checkout-content-section">
             <div className="checkout-forms">
-              {/* Information Section */}
               <div className="checkout-form-section">
                 <div className="checkout-section-header">
                   <input
@@ -345,7 +345,6 @@ class Checkout extends Component {
                 )}
               </div>
 
-              {/* Payment Section */}
               <div className="checkout-form-section">
                 <div className="checkout-section-header">
                   <input
@@ -481,7 +480,6 @@ class Checkout extends Component {
             <div className="checkout-order-summary-box">
               <div className="checkout-summary-title">Order Summary</div>
 
-              {/* Cart Items Summary */}
               <div className="checkout-cart-items">
                 {cartItems.map(item => (
                   <div key={item.id} className="checkout-cart-item">

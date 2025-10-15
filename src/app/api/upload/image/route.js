@@ -14,7 +14,6 @@ export async function POST(request) {
       );
     }
 
-    // Kiểm tra loại file
     if (!file.type.startsWith('image/')) {
       return NextResponse.json(
         { success: false, error: 'Chỉ cho phép upload file ảnh' },
@@ -22,10 +21,9 @@ export async function POST(request) {
       );
     }
 
-    // Kiểm tra kích thước file (max 1MB)
-    if (file.size > 1 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
-        { success: false, error: 'Kích thước file quá lớn (tối đa 1MB)' },
+        { success: false, error: 'Kích thước file quá lớn (tối đa 5MB)' },
         { status: 400 }
       );
     }
@@ -33,7 +31,6 @@ export async function POST(request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Tạo tên file unique
     const timestamp = Date.now();
     const extension = path.extname(file.name);
     const filename = `${timestamp}_${Math.random().toString(36).substring(2)}${extension}`;
@@ -42,11 +39,8 @@ export async function POST(request) {
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadDir, { recursive: true });
 
-    // Lưu file
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
-
-    // Trả về URL của ảnh
     const imageUrl = `/uploads/${filename}`;
 
     return NextResponse.json({

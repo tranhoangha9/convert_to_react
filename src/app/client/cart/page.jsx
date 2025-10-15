@@ -46,7 +46,6 @@ class Cart extends Component {
         isCouponApplied: true
       });
 
-      // Lưu discount vào sessionStorage (mất khi đóng tab)
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('cartDiscount', discount.toString());
       }
@@ -68,7 +67,6 @@ class Cart extends Component {
       isCouponApplied: false
     });
 
-    // Xóa discount khỏi sessionStorage
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('cartDiscount');
     }
@@ -100,7 +98,7 @@ class Cart extends Component {
 
     if (!user || !user.id) {
       const currentUrl = encodeURIComponent(window.location.pathname);
-      window.location.href = `/auth/login?redirect=${currentUrl}`;
+      window.location.href = `/client/auth/login?redirect=${currentUrl}`;
       return;
     }
 
@@ -110,8 +108,7 @@ class Cart extends Component {
       return;
     }
 
-    // Chuyển sang checkout (discount đã lưu trong sessionStorage)
-    this.props.router.push('/checkout');
+    this.props.router.push('/client/checkout');
   }
 
   render() {

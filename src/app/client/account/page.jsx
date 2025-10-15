@@ -41,7 +41,7 @@ class Account extends Component {
     const { getCurrentUser } = await import('@/lib/authService');
     const user = getCurrentUser();
     if (!user) {
-      window.location.href = '/auth/login';
+      window.location.href = '/client/auth/login';
       return;
     }
 
@@ -64,20 +64,48 @@ class Account extends Component {
       }
     } catch (error) {
       console.error('Error checking auth:', error);
-      window.location.href = '/auth/login';
+      window.location.href = '/client/auth/login';
     }
   }
 
-  handleImageChange = (e) => {
+  handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       this.setState({
-        profileImage: file,
         profileImageUrl: e.target.result
       });
+
+      try {
+        const formDataUpload = new FormData();
+        formDataUpload.append('image', file);
+
+        const response = await fetch('/api/upload/image', {
+          method: 'POST',
+          body: formDataUpload
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          this.setState({
+            profileImageUrl: data.imageUrl
+          });
+        } else {
+          alert('Lỗi khi upload ảnh: ' + data.error);
+          this.setState({
+            profileImageUrl: null
+          });
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Lỗi khi upload ảnh');
+        this.setState({
+          profileImageUrl: null
+        });
+      }
     };
     reader.readAsDataURL(file);
   }
@@ -148,7 +176,7 @@ class Account extends Component {
   handleLogout = async () => {
     const { logoutUser } = await import('@/lib/authService');
     logoutUser();
-    window.location.href = '/auth/login';
+    window.location.href = '/client/auth/login';
   }
 
   render() {

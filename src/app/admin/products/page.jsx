@@ -46,11 +46,11 @@ class AdminProducts extends Component {
         this.setState({ categories: data.categories });
       } else {
         console.error('Error fetching categories:', data.error);
-        // Có thể hiển thị thông báo lỗi ở đây nếu cần
+        this.setState({ categories: [] });
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
-      // Có thể hiển thị thông báo lỗi ở đây nếu cần
+      this.setState({ categories: [] });
     }
   }
 
@@ -69,6 +69,16 @@ class AdminProducts extends Component {
     } finally {
       this.setState({ loading: false });
     }
+  }
+
+  handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    this.setState(prevState => ({
+      formData: {
+        ...prevState.formData,
+        [name]: type === 'checkbox' ? checked : value
+      }
+    }));
   }
 
   handleRemoveImage = () => {
@@ -133,7 +143,7 @@ class AdminProducts extends Component {
         image: product.image || '',
         sku: product.sku || '',
         stock: product.stock,
-        categoryId: product.categoryId,
+        categoryId: product.categoryId || 1,
         isActive: product.isActive,
         isFeatured: product.isFeatured,
         imagePreview: product.image || ''
@@ -170,7 +180,6 @@ class AdminProducts extends Component {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Tạo preview cho ảnh
     const reader = new FileReader();
     reader.onload = (e) => {
       this.setState(prevState => ({
@@ -183,7 +192,6 @@ class AdminProducts extends Component {
     reader.readAsDataURL(file);
 
     try {
-      // Upload ảnh lên server
       const formDataUpload = new FormData();
       formDataUpload.append('image', file);
 
@@ -203,7 +211,6 @@ class AdminProducts extends Component {
         }));
       } else {
         alert('Lỗi khi upload ảnh: ' + data.error);
-        // Xóa preview nếu upload thất bại
         this.setState(prevState => ({
           formData: {
             ...prevState.formData,
@@ -214,7 +221,6 @@ class AdminProducts extends Component {
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Lỗi khi upload ảnh');
-      // Xóa preview nếu upload thất bại
       this.setState(prevState => ({
         formData: {
           ...prevState.formData,
@@ -266,8 +272,6 @@ class AdminProducts extends Component {
           <h2>Admin Panel</h2>
           <nav className="admin-nav">
             <Link href="/admin/products" className="admin-nav-item active">Quản lý sản phẩm</Link>
-            <Link href="/admin/banners" className="admin-nav-item">Quản lý Banner</Link>
-            <Link href="/admin/notifications" className="admin-nav-item">Quản lý Thông báo</Link>
           </nav>
         </div>
 
@@ -288,16 +292,20 @@ class AdminProducts extends Component {
                     <label>Danh mục</label>
                     <select
                       name="categoryId"
-                      value={formData.categoryId}
+                      value={formData.categoryId || ''}
                       onChange={this.handleInputChange}
                       disabled={this.state.categories.length === 0}
                     >
                       <option value="">Chọn danh mục</option>
-                      {this.state.categories.map(category => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
+                      {this.state.categories.length === 0 ? (
+                        <option value="" disabled>Không thể tải danh mục</option>
+                      ) : (
+                        this.state.categories.map(category => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
                   <div className="form-group">
@@ -315,61 +323,51 @@ class AdminProducts extends Component {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Tên sản phẩm *</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       name="name"
                       value={formData.name}
                       onChange={this.handleInputChange}
-                      placeholder="Nhập tên sản phẩm" 
+                      placeholder="Nhập tên sản phẩm"
                       required
                     />
                   </div>
                   <div className="form-group">
                     <label>Giá *</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       name="price"
                       value={formData.price}
                       onChange={this.handleInputChange}
-                      placeholder="Nhập giá" 
+                      placeholder="Nhập giá"
                       step="0.01"
                       required
                     />
                   </div>
                   <div className="form-group">
                     <label>Giá gốc</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       name="originalPrice"
                       value={formData.originalPrice}
                       onChange={this.handleInputChange}
-                      placeholder="Nhập giá gốc" 
+                      placeholder="Nhập giá gốc"
                       step="0.01"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Số lượng</label>
+                    <input
+                      type="number"
+                      name="stock"
+                      value={formData.stock}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập số lượng"
                     />
                   </div>
                 </div>
 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label>Số lượng</label>
-                    <input 
-                      type="number" 
-                      name="stock"
-                      value={formData.stock}
-                      onChange={this.handleInputChange}
-                      placeholder="Nhập số lượng" 
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>URL hình ảnh</label>
-                    <input 
-                      type="text" 
-                      name="image"
-                      value={formData.image}
-                      onChange={this.handleInputChange}
-                      placeholder="Nhập URL hình ảnh"
-                    />
-                  </div>
                   <div className="form-group">
                     <label>Hoặc tải lên hình ảnh</label>
                     <input
@@ -382,16 +380,18 @@ class AdminProducts extends Component {
                     {formData.imagePreview && (
                       <div className="image-preview">
                         <img src={formData.imagePreview} alt="Preview" />
-                        <button
-                          type="button"
-                          className="remove-image-btn"
-                          onClick={this.handleRemoveImage}
-                          title="Xóa ảnh"
-                        >
-                          ×
-                        </button>
                       </div>
                     )}
+                  </div>
+                  <div className="form-group">
+                    <label>URL hình ảnh</label>
+                    <input
+                      type="text"
+                      name="image"
+                      value={formData.image}
+                      onChange={this.handleInputChange}
+                      placeholder="Nhập URL hình ảnh"
+                    />
                   </div>
                 </div>
 

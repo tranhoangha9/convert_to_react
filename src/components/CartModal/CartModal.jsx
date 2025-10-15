@@ -149,7 +149,7 @@ class CartModal extends Component {
                      
                         <div className="cart-actions">
                             <Link 
-                                href="/cart"
+                                href="/client/cart"
                                 onClick={onClose}
                                 className="place-order-btn"
                             >

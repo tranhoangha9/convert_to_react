@@ -2,13 +2,29 @@ import { prisma } from '../../../lib/prisma';
 
 export async function POST(request) {
   try {
-    const { customerInfo, paymentInfo, items, total, paymentMethod, userId } = await request.json();
+    const { customerInfo, paymentInfo, cartItems, total, userId, discount, discountCode } = await request.json();
 
-    if (!customerInfo || !paymentInfo || !items || items.length === 0 || !userId) {
+    if (!customerInfo || !paymentInfo || !cartItems || cartItems.length === 0 || !userId) {
       return Response.json({
         success: false,
         error: 'Missing required information'
       }, { status: 400 });
+    }
+
+    if (!customerInfo.fullName || !customerInfo.mobileNumber || !customerInfo.state || !customerInfo.city) {
+      return Response.json({
+        success: false,
+        error: 'Missing customer information'
+      }, { status: 400 });
+    }
+
+    if (paymentInfo.method === 'card') {
+      if (!paymentInfo.cardNumber || !paymentInfo.expiryDate || !paymentInfo.cvv || !paymentInfo.cardHolderName) {
+        return Response.json({
+          success: false,
+          error: 'Missing payment information'
+        }, { status: 400 });
+      }
     }
 
     const user = await prisma.user.findUnique({
@@ -23,22 +39,37 @@ export async function POST(request) {
       }, { status: 401 });
     }
 
-    // Create order với thông tin đầy đủ
+    const shippingAddress = `${customerInfo.fullName}, ${customerInfo.mobileNumber}, ${customerInfo.state}, ${customerInfo.city}${customerInfo.pinCode ? ', ' + customerInfo.pinCode : ''}`;
+
+    let discountId = null;
+    if (discount && discount > 0) {
+      const discountRecord = await prisma.discount.findFirst({
+        where: {
+          code: discountCode || 'giamgia', // Sử dụng code từ frontend hoặc mặc định
+          isActive: true
+        }
+      });
+
+      if (discountRecord) {
+        discountId = discountRecord.id;
+      }
+    }
+
     const order = await prisma.order.create({
       data: {
         userId: user.id,
         totalAmount: total,
-        discountId: orderData.discountId,
-        paymentMethod: paymentMethod,
+        discountId: discountId,
+        paymentMethod: paymentInfo.method,
         status: 'pending',
         customerInfo: JSON.stringify(customerInfo),
         paymentInfo: JSON.stringify(paymentInfo),
-        shippingAddress: customerInfo.address + ', ' + customerInfo.city + ', ' + customerInfo.district + ', ' + customerInfo.ward,
+        shippingAddress: shippingAddress,
         notes: null
       }
     });
 
-    const orderItemsData = items.map(item => ({
+    const orderItemsData = cartItems.map(item => ({
       orderId: order.id,
       productId: item.id,
       quantity: item.quantity,
@@ -59,7 +90,7 @@ export async function POST(request) {
     console.error('Order creation error:', error);
     return Response.json({
       success: false,
-      error: error.message
+      error: error.message || 'Internal server error'
     }, { status: 500 });
   }
 }

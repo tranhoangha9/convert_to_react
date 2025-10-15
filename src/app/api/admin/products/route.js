@@ -35,7 +35,6 @@ export async function GET(request) {
       }
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -91,7 +90,6 @@ export async function POST(request) {
       product
     });
   } catch (error) {
-    console.error('Error creating product:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -129,7 +127,6 @@ export async function PUT(request) {
       product
     });
   } catch (error) {
-    console.error('Error updating product:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -160,7 +157,6 @@ export async function DELETE(request) {
       message: 'Xóa sản phẩm thành công'
     });
   } catch (error) {
-    console.error('Error deleting product:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
