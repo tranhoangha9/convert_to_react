@@ -14,10 +14,6 @@ export async function GET(request) {
     const where = {
       isActive: true
     };
-
-    if (categoryId) {
-      where.categoryId = parseInt(categoryId);
-    }
     const [products, totalCount] = await Promise.all([
       prisma.product.findMany({
         where,

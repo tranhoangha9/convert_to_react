@@ -31,7 +31,7 @@ class Brands extends Component {
         <div className="brands-images">
           {brands.map((brand) => (
             <div key={brand.id} className="brand-logo">
-              <img src={brand.image} alt={`Brand ${brand.id}`} />
+              <img src={brand.image} alt={`Brand ${brand.id}`} loading="lazy" />
             </div>
           ))}
         </div>
@@ -39,11 +39,11 @@ class Brands extends Component {
         <div className="image-banner">
           <div className="collection-images">
             <div className="collection-image-up">
-              <img src={bannerImages[0].image} alt="Banner Image 1" />
+              <img src={bannerImages[0].image} alt="Banner Image 1" loading="lazy" />
             </div>
             <div className="collection-image-down">
-              <img src={bannerImages[1].image} alt="Banner Image 2" />
-              <img src={bannerImages[2].image} alt="Banner Image 3" />
+              <img src={bannerImages[1].image} alt="Banner Image 2" loading="lazy" />
+              <img src={bannerImages[2].image} alt="Banner Image 3" loading="lazy" />
             </div>
           </div>
         </div>

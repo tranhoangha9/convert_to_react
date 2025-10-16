@@ -24,7 +24,7 @@ class Collection extends Component {
         <div className="collection-content">
           {collections.map((item) => (
             <div key={item.id} className="collection-items">
-              <img src={item.image} alt={item.name} />
+              <img src={item.image} alt={item.name} loading="lazy" />
               <p>{item.name}</p>
             </div>
           ))}

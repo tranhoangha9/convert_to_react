@@ -137,7 +137,7 @@ class CategoryPage extends Component {
         <div className="cp-promo-banner">
           <div className="cp-promo-content">
             <div className="cp-promo-image">
-              <img src="/assets/images/banner_cate.png" alt="Black Friday" />
+              <img src="/assets/images/banner_cate.png" alt="Black Friday" loading="lazy" />
             </div>
             <div className="cp-promo-text">
               <h2>UPTO 70% OFF</h2>
@@ -362,7 +362,7 @@ class CategoryPage extends Component {
                   {products.map((product) => (
                     <div key={product.id} className="cp-product-card">
                       <div className="cp-product-image">
-                        <img src={product.image} alt={product.name} />
+                        <img src={product.image} alt={product.name} loading="lazy" />
                       </div>
                       <div className="cp-product-info">
                         <div className="cp-product-header">
@@ -373,7 +373,8 @@ class CategoryPage extends Component {
                             <button
                               className="cp-cart-btn"
                               onClick={() => this.addToCart(product)}
-                              title="Thêm vào giỏ hàng"
+                              title="Add to cart"
+                              aria-label={`Add ${product.name} to cart`}
                             >
                               <svg
                                 width="20"
@@ -410,6 +411,7 @@ class CategoryPage extends Component {
                                 product.isWishlisted ? "cp-wishlisted" : ""
                               }`}
                               onClick={() => this.toggleWishlist(product.id)}
+                              aria-label={`${product.isWishlisted ? 'Remove from' : 'Add to'} wishlist`}
                             >
                               <svg
                                 width="24"
@@ -480,6 +482,7 @@ class CategoryPage extends Component {
                         pagination.currentPage === page ? "cp-active" : ""
                       }`}
                       onClick={() => this.handlePageChange(page)}
+                      aria-label={`Go to page ${page}`}
                     >
                       {page}
                     </button>
@@ -490,6 +493,7 @@ class CategoryPage extends Component {
                       onClick={() =>
                         this.handlePageChange(pagination.currentPage + 1)
                       }
+                      aria-label="Go to next page"
                     >
                       Next
                     </button>

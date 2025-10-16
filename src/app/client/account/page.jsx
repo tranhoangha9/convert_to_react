@@ -191,43 +191,43 @@ class Account extends Component {
         <div className="account-sidebar">
           <div className="sidebar-card">
             <nav className="sidebar-menu">
-              <a href="#personal-info" className="menu-item active">
+              <a href="#personal-info" className="menu-item active" aria-label="View personal information">
                 Personal Information
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#refer-earn" className="menu-item">
+              <a href="#refer-earn" className="menu-item" aria-label="View refer and earn section">
                 Refer and Earn
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#my-orders" className="menu-item">
+              <a href="#my-orders" className="menu-item" aria-label="View my orders">
                 My Orders
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#my-wishlist" className="menu-item">
+              <a href="#my-wishlist" className="menu-item" aria-label="View my wishlist">
                 My Wishlist
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#my-reviews" className="menu-item">
+              <a href="#my-reviews" className="menu-item" aria-label="View my reviews">
                 My Reviews
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#my-address" className="menu-item">
+              <a href="#my-address" className="menu-item" aria-label="View my address book">
                 My Address Book
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
-              <a href="#my-cards" className="menu-item">
+              <a href="#my-cards" className="menu-item" aria-label="View my saved cards">
                 My Saved Cards
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

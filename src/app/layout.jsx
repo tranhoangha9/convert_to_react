@@ -5,14 +5,10 @@ import Footer from '../components/Footer/page';
 import '../styles/globals.css';
 import '../components/Header/Header.css';
 import '../components/Footer/Footer.css';
-import './client/homepage/Notification/Notification.css';
-import './client/homepage/Banner/Banner.css';
-import './client/homepage/BestSelling/BestSelling.css';
-import './client/homepage/Collection/Collection.css';
-import './client/homepage/Brands/Brands.css';
 
 export const metadata = {
-  title: "Cora'l ",
+  title: "Cora'l - Premium Handbags & Fashion Accessories",
+  description: "Discover premium handbags and accessories at Cora'l. Shop the latest collection of stylish bags, purses, and fashion accessories with fast shipping and secure checkout.",
 };
 
 export default function RootLayout({ children }) {

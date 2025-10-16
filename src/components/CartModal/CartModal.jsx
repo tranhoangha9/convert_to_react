@@ -14,11 +14,11 @@ class CartModal extends Component {
         this.checkCartInterval = null;
     }
 
-    async componentDidMount() {
-        await this.loadCartItems();
+    componentDidMount() {
+        this.loadCartItems();
         this.checkCartInterval = setInterval(() => {
             this.loadCartItems();
-        }, 2000);
+        }, 1000);
     }
 
     componentWillUnmount() {
@@ -27,41 +27,37 @@ class CartModal extends Component {
         }
     }
 
-    loadCartItems = async () => {
-        try {
-            const { getCart } = await import('@/lib/cartService');
-            const items = await getCart();
-            
-            if (JSON.stringify(this.state.items) !== JSON.stringify(items)) {
-                this.setState({ items });
+    loadCartItems = () => {
+        const savedCart = localStorage.getItem('cartItems');
+        if (savedCart) {
+            const newItems = JSON.parse(savedCart);
+            if (JSON.stringify(this.state.items) !== JSON.stringify(newItems)) {
+                this.setState({ items: newItems });
             }
-        } catch (error) {
-            console.error('Error loading cart:', error);
         }
     }
 
-    updateQuantity = async (id, change) => {
-        try {
-            const item = this.state.items.find(i => i.id === id);
-            if (!item) return;
-
-            const newQuantity = Math.max(1, item.quantity + change);
-            const { updateCartItemQuantity } = await import('@/lib/cartService');
-            await updateCartItemQuantity(id, newQuantity);
-            await this.loadCartItems();
-        } catch (error) {
-            console.error('Error updating quantity:', error);
-        }
+    updateQuantity = (id, change) => {
+        this.setState(prevState => {
+            const updatedItems = prevState.items.map(item => 
+                item.id === id 
+                    ? {...item, quantity: Math.max(1, item.quantity + change)}
+                    : item
+            );
+            localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+            const event = new Event('storage');
+            event.key = 'cartItems';
+            window.dispatchEvent(event);
+            return { items: updatedItems };
+        });
     }
 
-    removeItem = async (id) => {
-        try {
-            const { removeFromCart } = await import('@/lib/cartService');
-            await removeFromCart(id);
-            await this.loadCartItems();
-        } catch (error) {
-            console.error('Error removing item:', error);
-        }
+    removeItem = (id) => {
+        this.setState(prevState => {
+            const updatedItems = prevState.items.filter(item => item.id !== id);
+            localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+            return { items: updatedItems };
+        });
     }
 
     getSubtotal = () => {
@@ -89,7 +85,7 @@ class CartModal extends Component {
             >
                 <div className="cart-modal">
                     <div className="cart-modal-header">
-                        <button onClick={onClose} className="back-button">
+                        <button onClick={onClose} className="back-button" aria-label="Close cart modal">
                             ← Back
                         </button>
                     </div>
@@ -102,9 +98,9 @@ class CartModal extends Component {
                                     <h3>{item.name}</h3>
                                     <div className="item-details-bottom">
                                         <div className="quantity-controls">
-                                            <button onClick={() => this.updateQuantity(item.id, -1)}>-</button>
+                                            <button onClick={() => this.updateQuantity(item.id, -1)} aria-label={`Decrease quantity of ${item.name}`}>-</button>
                                             <span>{item.quantity}</span>
-                                            <button onClick={() => this.updateQuantity(item.id, 1)}>+</button>
+                                            <button onClick={() => this.updateQuantity(item.id, 1)} aria-label={`Increase quantity of ${item.name}`}>+</button>
                                         </div>
                                         <div className="item-price">
                                             ${(item.price * item.quantity).toFixed(2)}
@@ -114,6 +110,7 @@ class CartModal extends Component {
                                 <button 
                                     onClick={() => this.removeItem(item.id)}
                                     className="remove-item"
+                                    aria-label={`Remove ${item.name} from cart`}
                                 >
                                     ×
                                 </button>
@@ -143,19 +140,29 @@ class CartModal extends Component {
                                 value={this.state.couponCode}
                                 onChange={(e) => this.setState({ couponCode: e.target.value })}
                             />
-                            <button type="submit">Apply</button>
+                            <button type="submit" aria-label="Apply coupon code">Apply</button>
                         </form>
 
-                     
+                        <form onSubmit={this.handleCouponSubmit} className="coupon-form">
+                            <input
+                                type="text"
+                                placeholder="Apply Coupon Code"
+                                value={this.state.couponCode}
+                                onChange={(e) => this.setState({ couponCode: e.target.value })}
+                            />
+                            <button type="submit" aria-label="Check coupon code">CHECK</button>
+                        </form>
+
                         <div className="cart-actions">
                             <Link 
-                                href="/client/cart"
+                                href="/cart"
                                 onClick={onClose}
                                 className="place-order-btn"
+                                aria-label="Proceed to checkout"
                             >
                                 Place Order
                             </Link>
-                            <button onClick={onClose} className="continue-shopping-btn">
+                            <button onClick={onClose} className="continue-shopping-btn" aria-label="Continue shopping">
                                 Continue Shopping
                             </button>
                         </div>

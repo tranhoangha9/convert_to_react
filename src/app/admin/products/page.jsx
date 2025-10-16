@@ -130,6 +130,33 @@ class AdminProducts extends Component {
     }
   }
 
+  handleDelete = async (id) => {
+    if (!confirm('Bạn có chắc muốn tắt kích hoạt sản phẩm này? Sản phẩm sẽ không hiển thị ở trang khách hàng nhưng vẫn có thể kích hoạt lại.')) return;
+
+    try {
+      this.setState({ loading: true });
+      const response = await fetch('/api/admin/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, isActive: false })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message);
+        await this.fetchProducts();
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error('Error deactivating product:', error);
+      alert('Lỗi khi tắt kích hoạt sản phẩm');
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
   handleEdit = (product) => {
     this.setState({
       showForm: true,
@@ -151,17 +178,18 @@ class AdminProducts extends Component {
     });
   }
 
-  handleDelete = async (id) => {
-    if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
+  handleActivate = async (id) => {
+    if (!confirm('Bạn có chắc muốn kích hoạt lại sản phẩm này?')) return;
 
     try {
       this.setState({ loading: true });
-      const response = await fetch(`/api/admin/products?id=${id}`, {
-        method: 'DELETE'
+      const response = await fetch('/api/admin/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, isActive: true })
       });
 
       const data = await response.json();
-
       if (data.success) {
         alert(data.message);
         await this.fetchProducts();
@@ -169,8 +197,8 @@ class AdminProducts extends Component {
         alert(data.error);
       }
     } catch (error) {
-      console.error('Error deleting product:', error);
-      alert('Lỗi khi xóa sản phẩm');
+      console.error('Error activating product:', error);
+      alert('Lỗi khi kích hoạt sản phẩm');
     } finally {
       this.setState({ loading: false });
     }
@@ -480,11 +508,11 @@ class AdminProducts extends Component {
                     </tr>
                   ) : (
                     products.map(product => (
-                      <tr key={product.id}>
+                      <tr key={product.id} style={{ opacity: product.isActive ? 1 : 0.6 }}>
                         <td>{product.id}</td>
                         <td>
                           {product.image && (
-                            <img src={product.image} alt={product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                            <img src={product.image} alt={product.name} loading="lazy" />
                           )}
                         </td>
                         <td>{product.name}</td>
@@ -498,7 +526,7 @@ class AdminProducts extends Component {
                             background: product.isActive ? '#d4edda' : '#f8d7da',
                             color: product.isActive ? '#155724' : '#721c24'
                           }}>
-                            {product.isActive ? 'Hoạt động' : 'Tắt'}
+                            {product.isActive ? 'Hoạt động' : 'Tắt kích hoạt'}
                           </span>
                         </td>
                         <td>
@@ -508,12 +536,21 @@ class AdminProducts extends Component {
                           >
                             Sửa
                           </button>
-                          <button 
-                            onClick={() => this.handleDelete(product.id)}
-                            style={{ padding: '4px 12px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                          >
-                            Xóa
-                          </button>
+                          {product.isActive ? (
+                            <button 
+                              onClick={() => this.handleDelete(product.id)}
+                              style={{ marginRight: '8px', padding: '4px 12px', background: '#ffc107', color: '#212529', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                            >
+                              Tắt kích hoạt
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => this.handleActivate(product.id)}
+                              style={{ marginRight: '8px', padding: '4px 12px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                            >
+                              Kích hoạt lại
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))

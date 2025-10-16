@@ -18,7 +18,7 @@ export async function GET(request) {
           category: true
         },
         orderBy: {
-          createdAt: 'desc'
+          id: 'desc'
         }
       }),
       prisma.product.count()
@@ -99,10 +99,10 @@ export async function POST(request) {
   }
 }
 
-export async function PUT(request) {
+export async function PATCH(request) {
   try {
     const data = await request.json();
-    const { id, ...updateData } = data;
+    const { id, isActive } = data;
 
     if (!id) {
       return NextResponse.json(
@@ -111,19 +111,14 @@ export async function PUT(request) {
       );
     }
 
-    if (updateData.price) updateData.price = parseFloat(updateData.price);
-    if (updateData.originalPrice) updateData.originalPrice = parseFloat(updateData.originalPrice);
-    if (updateData.stock) updateData.stock = parseInt(updateData.stock);
-    if (updateData.categoryId) updateData.categoryId = parseInt(updateData.categoryId);
-
     const product = await prisma.product.update({
       where: { id: parseInt(id) },
-      data: updateData
+      data: { isActive }
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Cập nhật sản phẩm thành công',
+      message: `Đã ${isActive ? 'kích hoạt' : 'tắt kích hoạt'} sản phẩm thành công`,
       product
     });
   } catch (error) {
@@ -148,13 +143,14 @@ export async function DELETE(request) {
       );
     }
 
-    await prisma.product.delete({
-      where: { id: parseInt(id) }
+    const product = await prisma.product.update({
+      where: { id: parseInt(id) },
+      data: { isActive: false }
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Xóa sản phẩm thành công'
+      message: 'Đã tắt kích hoạt sản phẩm thành công'
     });
   } catch (error) {
     return NextResponse.json(

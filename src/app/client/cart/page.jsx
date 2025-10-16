@@ -120,7 +120,7 @@ class Cart extends Component {
     return (
       <>
         <section className="cart-breadcrumbs">
-          <Link href="/">Home</Link>
+          <Link href="/" aria-label="Go to homepage">Home</Link>
           <span className="breadcrumb-separator">&gt;</span>
           <span className="breadcrumb-current">My Cart</span>
         </section>
@@ -159,8 +159,8 @@ class Cart extends Component {
                     <div className="cart-item-subtotal">${(item.price * item.quantity).toFixed(2)}</div>
                   </div>
                   <div className="cart-item-actions">
-                    <a href="#" className="cart-move-wishlist">Move to Wishlist</a>
-                    <a href="#" className="cart-remove-item" onClick={() => this.removeFromCart(item.id)}>Remove</a>
+                    <a href="#" className="cart-move-wishlist" aria-label={`Move ${item.name} to wishlist`}>Move to Wishlist</a>
+                    <a href="#" className="cart-remove-item" onClick={() => this.removeFromCart(item.id)} aria-label={`Remove ${item.name} from cart`}>Remove</a>
                   </div>
                 </div>
               ))}
@@ -196,10 +196,11 @@ class Cart extends Component {
                   className="btn-place-order"
                   onClick={this.handlePlaceOrder}
                   disabled={loading}
+                  aria-label={loading ? 'Processing order' : 'Proceed to checkout'}
                 >
                   {loading ? 'Đang xử lý...' : 'Proceed to Checkout'}
                 </button>
-                <Link href="/" className="btn-continue">Continue Shopping</Link>
+                <Link href="/" className="btn-continue" aria-label="Continue shopping">Continue Shopping</Link>
               </div>
             </div>
           </div>

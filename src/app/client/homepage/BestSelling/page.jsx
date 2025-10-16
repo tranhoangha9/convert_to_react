@@ -56,25 +56,6 @@ class BestSelling extends Component {
     }
   }
 
-  addToCart = async (product) => {
-    console.log('Adding to cart (homepage):', product);
-    try {
-      const { addToCart: addToCartService } = await import('@/lib/cartService');
-      const success = await addToCartService(product, 1);
-
-      console.log('Add to cart result (homepage):', success);
-
-      if (success) {
-        alert(`Đã thêm "${product.name}" vào giỏ hàng!`);
-      } else {
-        alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
-      }
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      alert('Có lỗi xảy ra khi thêm vào giỏ hàng!');
-    }
-  }
-
   render() {
     const { products, loading, error } = this.state;
 
@@ -106,12 +87,12 @@ class BestSelling extends Component {
       <section className="new-arrivals">
         <div className="arrivals-header">
           <h2>New Arrivals</h2>
-          <Link href="/category-page" className="view-all-btn">View All</Link>
+          <Link href="/client/category-page" className="view-all-btn">View All</Link>
         </div>
         <div className="arrivals-container">
           {products.map((product) => (
             <div key={product.id} className="new-arrivals-products">
-              <img src={product.image} alt={product.name} />
+              <img src={product.image} alt={product.name} loading="lazy" />
               <div className="arrivals-content">
                 <div className="product-header">
                   <p className="name">{product.brand}</p>
